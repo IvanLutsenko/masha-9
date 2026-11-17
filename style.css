@@ -152,3 +152,18 @@ td.muted{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
 .dash:not([hidden]){display:flex;flex-direction:column;gap:28px}
 [hidden]{display:none !important}
+/* админка на телефоне: строки таблиц превращаются в карточки */
+@media (max-width:600px){
+  .tablewrap{overflow:visible}
+  .t-rsvp,.t-gifts,.t-rsvp tbody,.t-gifts tbody,.t-rsvp tr,.t-gifts tr,.t-rsvp td,.t-gifts td{display:block}
+  .t-rsvp thead,.t-gifts thead{display:none}
+  .t-rsvp tr,.t-gifts tr{display:grid;gap:4px 10px;padding:12px 14px;border-bottom:1px solid #e3b75a22}
+  .t-rsvp td,.t-gifts td{padding:0;border:0}
+  .t-rsvp tr{grid-template-columns:1fr auto}
+  .t-rsvp td:nth-child(1){font-weight:600}
+  .t-rsvp td:nth-child(n+3){grid-column:1/-1;color:var(--muted);font-size:14px}
+  .t-rsvp td:empty{display:none}
+  .t-gifts tr{grid-template-columns:26px 1fr auto;align-items:center}
+  .t-gifts td:nth-child(3){grid-column:2;grid-row:2}
+  .t-gifts td:nth-child(4){grid-column:3;grid-row:1/3}
+}

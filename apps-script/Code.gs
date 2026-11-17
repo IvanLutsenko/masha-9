@@ -1,21 +1,16 @@
 /**
  * Бэкенд приглашения на ДР Маши.
- * Таблица: листы «RSVP» и «Подарки» создаются функцией setup().
+ * Скрипт привязан к Google-таблице; листы «RSVP» и «Подарки» создаются сами.
  * Публично отдаёт только: какие подарки заняты и сколько гостей придёт.
- * Всё остальное — только с PIN (Script Properties → ADMIN_PIN).
+ * Всё остальное — только с PIN (ADMIN_PIN в Secrets.gs).
  */
 const RSVP = 'RSVP';
 const GIFTS = 'Подарки';
 const RSVP_HEAD = ['Когда', 'Ребёнок', 'Придёт', 'Родитель', 'Контакт', 'Комментарий'];
 const GIFT_HEAD = ['Когда', 'ID подарка', 'Подарок', 'Кто дарит', 'Токен'];
 
-function setup() {
-  sheet_(RSVP, RSVP_HEAD);
-  sheet_(GIFTS, GIFT_HEAD);
-  const props = PropertiesService.getScriptProperties();
-  if (!props.getProperty('ADMIN_PIN')) props.setProperty('ADMIN_PIN', String(Math.floor(1000 + Math.random() * 9000)));
-  Logger.log('ADMIN_PIN = ' + props.getProperty('ADMIN_PIN'));
-}
+// PIN админки — константа ADMIN_PIN в Secrets.gs (не в git).
+// Листы создаются сами при первом обращении.
 
 function doGet(e) {
   const p = e.parameter || {};
@@ -110,8 +105,7 @@ function sheet_(name, head) {
   return sh;
 }
 function pinOk_(pin) {
-  const real = PropertiesService.getScriptProperties().getProperty('ADMIN_PIN');
-  return !!real && String(pin || '') === real;
+  return typeof ADMIN_PIN !== 'undefined' && !!ADMIN_PIN && String(pin || '') === String(ADMIN_PIN);
 }
 function clean_(s, max) {
   // обрезаем; если начинается с = + - @, ставим апостроф, чтобы таблица не приняла текст за формулу
