@@ -196,7 +196,7 @@ function renderWishes(){
     const kh = kaspiHref(g.kaspi);
     if (kh && !taken){
       if (g.note) d.append(" · ");
-      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Найти на Kaspi";
+      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = /^https?:/.test(g.kaspi) ? "Смотреть на Kaspi" : "Искать на Kaspi";
       d.appendChild(a);
     }
     if (!d.childNodes.length) d.remove();
