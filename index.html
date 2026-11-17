@@ -51,8 +51,8 @@
 
   <article class="letter">
     <div class="crest"><span>Лагерь полукровок</span><span>Домик Гекаты · Хогвартс</span></div>
-    <p class="greet" id="greet">Привет, юный полубог!</p>
-    <p id="intro">Ты приглашён(а) в Лагерь полукровок на девятый день рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.</p>
+    <p class="greet" id="greet">Привет, герой!</p>
+    <p id="intro">Тебя ждут в Лагере полукровок на девятом дне рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.</p>
     <p>Где именно откроется портал, Оракул сообщит совсем скоро.</p>
     <p class="sign">Маша</p>
     <div class="wax" aria-hidden="true">Ω</div>
@@ -105,7 +105,7 @@
   <section aria-labelledby="h-wish">
     <div>
       <h2 id="h-wish"><span class="gr">Дары для героини</span>Вишлист Маши</h2>
-      <p class="lead">Маша составила список сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумал — нажми «Отменить».</p>
+      <p class="lead">Маша составила список сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумаешь — нажми «Отменить».</p>
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
     <ol class="wishes" id="wishes"></ol>
@@ -134,6 +134,7 @@
 
 <script src="config.js"></script>
 <script src="api.js"></script>
+<script src="gender.js"></script>
 <script>
 const P = window.PARTY;
 const $ = id => document.getElementById(id);
@@ -145,7 +146,8 @@ let state = { taken: [], coming: 0 };
 let mine = store.get("masha9.mine", {});   // giftId -> token
 
 /* имя гостя из ссылки: …/#Соня */
-const guest = (() => { try { return decodeURIComponent(location.hash.slice(1)).trim().slice(0, 40); } catch { return ""; } })();
+const G = (() => { try { return Gender.parse(decodeURIComponent(location.hash.slice(1)).slice(0, 40)); } catch { return { name: "", g: null }; } })();
+const guest = G.name;
 
 function renderStatic(){
   $("dateVal").textContent = P.dateText;
@@ -157,7 +159,8 @@ function renderStatic(){
   }
   if (guest){
     $("envName").textContent = "Для: " + guest;
-    $("greet").textContent = "Привет, " + guest + "!";
+    $("greet").textContent = Gender.pick(G.g, "Дорогой ", "Дорогая ", "Привет, ") + guest + "!";
+    $("intro").textContent = "Ты " + Gender.pick(G.g, "приглашён", "приглашена", "приглашён(а)") + " в Лагерь полукровок на девятый день рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.";
     $("rChild").value = guest;
     $("gWho").value = guest;
     $("rsvpTitle").textContent = guest + ", ты придёшь?";

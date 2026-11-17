@@ -1,7 +1,7 @@
 // Всё, что меняется, — здесь.
 window.PARTY = {
   // URL веб-приложения Apps Script (Deploy → Web app → URL, заканчивается на /exec)
-  scriptUrl: "",
+  scriptUrl: "https://script.google.com/macros/s/AKfycbyR7ZXiwEoZtpMUSvDvbPha-Y5SRQsJJOw7J151GLu7K4gftz6vEVzHvUFCNvPczTOsOw/exec",
 
   date: "2026-11-28",
   dateText: "Суббота, 28 ноября",
