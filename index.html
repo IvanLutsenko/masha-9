@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Маше 9 — Лагерь полукровок</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Маше 9 — приглашение в Лагерь полукровок">
+<meta property="og:description" content="Суббота, 28 ноября. Совиная почта для юных полубогов и волшебников.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="envelope-screen" id="envScreen">
+  <div class="env-stack">
+    <button class="env" id="env" type="button" aria-label="Открыть письмо">
+      <span class="body"></span>
+      <span class="flap"></span>
+      <span class="seal">М</span>
+      <span class="addr"><small>СОВИНАЯ ПОЧТА · СРОЧНО</small><span id="envName">Юному полубогу</span></span>
+    </button>
+    <div class="env-hint">Нажми на сургуч</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="arch">
+    <svg viewBox="0 0 420 150" aria-hidden="true">
+      <defs><path id="archPath" d="M40 120 Q210 10 380 120"/></defs>
+      <g fill="none" stroke="#e3b75a" stroke-width="2">
+        <rect x="24" y="96" width="30" height="50" rx="2"/>
+        <line x1="32" y1="100" x2="32" y2="142"/><line x1="39" y1="100" x2="39" y2="142"/><line x1="46" y1="100" x2="46" y2="142"/>
+        <rect x="18" y="90" width="42" height="8" rx="2"/>
+        <rect x="366" y="96" width="30" height="50" rx="2"/>
+        <line x1="374" y1="100" x2="374" y2="142"/><line x1="381" y1="100" x2="381" y2="142"/><line x1="388" y1="100" x2="388" y2="142"/>
+        <rect x="360" y="90" width="42" height="8" rx="2"/>
+        <path d="M40 92 Q210 -14 380 92" stroke-width="2.5"/>
+        <path d="M40 112 Q210 6 380 112" stroke-width="1.2" opacity=".6"/>
+      </g>
+      <text font-family="Philosopher, Georgia, serif" font-weight="700" font-size="21" letter-spacing="5" fill="#f07a28">
+        <textPath href="#archPath" startOffset="50%" text-anchor="middle">ЛАГЕРЬ ПОЛУКРОВОК</textPath>
+      </text>
+      <path d="M214 62 L200 88 H212 L204 110 L224 80 H211 Z" fill="#e3b75a"/>
+    </svg>
+    <div class="kicker">Совиная почта · 28.11</div>
+    <h1>Маше исполняется <em>9</em></h1>
+  </header>
+
+  <article class="letter">
+    <div class="crest"><span>Лагерь полукровок</span><span>Домик Гекаты · Хогвартс</span></div>
+    <p class="greet" id="greet">Привет, юный полубог!</p>
+    <p id="intro">Ты приглашён(а) в Лагерь полукровок на девятый день рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.</p>
+    <p>Где именно откроется портал, Оракул сообщит совсем скоро.</p>
+    <p class="sign">Маша</p>
+    <div class="wax" aria-hidden="true">Ω</div>
+  </article>
+
+  <section aria-labelledby="h-when" style="margin-top:10px">
+    <h2 id="h-when"><span class="gr">Миссия</span>Когда и где</h2>
+    <div class="facts">
+      <div class="fact">
+        <span class="lbl">Дата</span>
+        <span class="val" id="dateVal"></span>
+        <span class="note" id="timeVal">днём, время сообщим</span>
+      </div>
+      <div class="fact">
+        <span class="lbl">Место</span>
+        <span class="val" id="placeVal">Алматы</span>
+        <span class="note" id="placeNote">адрес пришлём, когда выберем площадку</span>
+      </div>
+    </div>
+    <div class="count"><b id="days">–</b><span id="daysLbl">дней до праздника</span></div>
+  </section>
+
+  <div class="meander" aria-hidden="true"></div>
+
+  <section aria-labelledby="h-rsvp">
+    <h2 id="h-rsvp"><span class="gr">Ответ сове</span>Ты придёшь?</h2>
+    <form class="panel" id="rsvpForm" novalidate>
+      <div class="field">
+        <label for="rChild">Имя полубога (ребёнка)</label>
+        <input id="rChild" name="child" autocomplete="off" required maxlength="60">
+      </div>
+      <div class="seg" role="radiogroup" aria-label="Придёт ли">
+        <input type="radio" id="rYes" name="coming" value="yes" checked><label for="rYes">Приду!</label>
+        <input type="radio" id="rNo" name="coming" value="no"><label for="rNo">Не получится</label>
+      </div>
+      <div class="field">
+        <label for="rParent">Родитель</label>
+        <input id="rParent" name="parent" autocomplete="name" maxlength="60">
+      </div>
+      <div class="field">
+        <label for="rContact">Телефон для связи</label>
+        <input id="rContact" name="contact" type="tel" autocomplete="tel" maxlength="60" placeholder="+7 …">
+      </div>
+      <div class="field">
+        <label for="rNote">Аллергии и пожелания</label>
+        <textarea id="rNote" name="note" maxlength="300"></textarea>
+      </div>
+      <div><button class="btn" type="submit" id="rBtn">Отправить сову</button></div>
+      <div class="msg" id="rMsg" role="status"></div>
+    </form>
+  </section>
+
+  <section aria-labelledby="h-wish">
+    <div>
+      <h2 id="h-wish"><span class="gr">Дары для героини</span>Вишлист Маши</h2>
+      <p class="lead">Маша составила список сама. Выбери подарок и нажми «Подарю это», и его увидят занятым все остальные гости.</p>
+    </div>
+    <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
+    <ol class="wishes" id="wishes"></ol>
+  </section>
+
+  <footer>
+    <span class="hand">До встречи в лагере!</span>
+    <span>Алматы, 2026</span>
+  </footer>
+</div>
+
+<dialog id="giftDlg">
+  <form method="dialog" id="giftForm">
+    <h3 id="giftDlgTitle">Подарю это</h3>
+    <div class="field">
+      <label for="gWho">От кого подарок</label>
+      <input id="gWho" maxlength="60" required placeholder="напр. Соня">
+    </div>
+    <div class="msg" id="gMsg" role="status"></div>
+    <div class="row">
+      <button class="btn ghost" value="cancel" type="button" id="gCancel">Отмена</button>
+      <button class="btn" type="submit" id="gOk">Забронировать</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const P = window.PARTY;
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let state = { taken: [], coming: 0 };
+let mine = store.get("masha9.mine", {});   // giftId -> token
+
+/* имя гостя из ссылки: …/#Соня */
+const guest = (() => { try { return decodeURIComponent(location.hash.slice(1)).trim().slice(0, 40); } catch { return ""; } })();
+
+function renderStatic(){
+  $("dateVal").textContent = P.dateText;
+  if (P.time) $("timeVal").textContent = P.time;
+  if (P.place){
+    $("placeVal").textContent = P.place;
+    const n = $("placeNote"); n.textContent = "";
+    if (P.mapUrl){ const a = document.createElement("a"); a.href = P.mapUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Открыть в 2ГИС"; n.appendChild(a); }
+  }
+  if (guest){
+    $("envName").textContent = "Для: " + guest;
+    $("greet").textContent = "Привет, " + guest + "!";
+    $("rChild").value = guest;
+    $("gWho").value = guest;
+  }
+  $("demoNote").hidden = !API.isDemo();
+  // отсчёт
+  const [y,m,d] = P.date.split("-").map(Number);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((new Date(y, m-1, d) - now) / 86400000);
+  if (diff > 0){
+    const n10 = diff % 10, n100 = diff % 100;
+    $("days").textContent = diff;
+    $("daysLbl").textContent = ((n10===1&&n100!==11)?"день":(n10>=2&&n10<=4&&(n100<12||n100>14))?"дня":"дней") + " до праздника";
+  } else if (diff === 0){ $("days").textContent = "Сегодня!"; $("daysLbl").textContent = ""; }
+  else { $("days").textContent = "✓"; $("daysLbl").textContent = "спасибо всем героям!"; }
+}
+
+function kaspiHref(k){
+  if (!k) return "";
+  return /^https?:\/\//.test(k) ? k : "https://kaspi.kz/shop/search/?text=" + encodeURIComponent(k);
+}
+
+function renderWishes(){
+  const ol = $("wishes"); ol.innerHTML = "";
+  P.gifts.forEach((g, i) => {
+    const taken = state.taken.includes(g.id);
+    const isMine = taken && mine[g.id];
+    const li = document.createElement("li");
+    li.className = "wish" + (taken ? " taken" : "") + (isMine ? " mine" : "");
+    li.innerHTML = `<span class="num">${i+1}</span><div><div class="t"></div><div class="d"></div></div><div class="act"></div>`;
+    li.querySelector(".t").textContent = g.title;
+    const d = li.querySelector(".d");
+    if (g.note) d.append(g.note);
+    const kh = kaspiHref(g.kaspi);
+    if (kh && !taken){
+      if (g.note) d.append(" · ");
+      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Найти на Kaspi";
+      d.appendChild(a);
+    }
+    if (!d.childNodes.length) d.remove();
+    const act = li.querySelector(".act");
+    if (isMine){
+      act.innerHTML = '<span class="badge">Это дарите вы</span>';
+      const b = document.createElement("button"); b.className = "btn ghost small"; b.type = "button"; b.textContent = "Отменить";
+      b.onclick = () => release(g, b); act.appendChild(b);
+    } else if (taken){
+      act.innerHTML = '<span class="badge">Уже выбрали</span>';
+    } else {
+      const b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = "Подарю это";
+      b.setAttribute("aria-label", "Подарю: " + g.title);
+      b.onclick = () => openGift(g); act.appendChild(b);
+    }
+    ol.appendChild(li);
+  });
+}
+
+function applyState(s){ if (s && s.taken){ state = s; renderWishes(); } }
+
+async function load(){
+  try { applyState(await API.get({ action: "state" })); }
+  catch { /* оставляем список без отметок */ }
+}
+
+/* бронь */
+let current = null;
+function openGift(g){
+  current = g;
+  $("giftDlgTitle").textContent = g.title;
+  $("gMsg").textContent = ""; $("gMsg").className = "msg";
+  $("gOk").disabled = false;
+  $("giftDlg").showModal();
+  $("gWho").focus();
+}
+$("gCancel").onclick = () => $("giftDlg").close();
+$("giftForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const who = $("gWho").value.trim();
+  if (!who){ $("gMsg").textContent = "Напиши, от кого подарок."; $("gMsg").className = "msg err"; return; }
+  $("gOk").disabled = true;
+  try {
+    const r = await API.post({ action: "reserve", giftId: current.id, giftTitle: current.title, who });
+    if (r.ok){
+      mine[current.id] = r.token; store.set("masha9.mine", mine);
+      applyState(r.state); $("giftDlg").close();
+    } else if (r.error === "taken"){
+      applyState(r.state);
+      $("gMsg").textContent = "Ой, этот подарок только что выбрал кто-то другой."; $("gMsg").className = "msg err";
+    } else { throw new Error(r.error); }
+  } catch {
+    $("gMsg").textContent = "Сова не долетела. Проверь интернет и попробуй ещё раз."; $("gMsg").className = "msg err";
+    $("gOk").disabled = false;
+  }
+});
+
+async function release(g, btn){
+  btn.disabled = true;
+  try {
+    const r = await API.post({ action: "release", giftId: g.id, token: mine[g.id] });
+    delete mine[g.id]; store.set("masha9.mine", mine);
+    if (r.ok) applyState(r.state); else load();
+  } catch { btn.disabled = false; }
+}
+
+/* RSVP */
+$("rsvpForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target, msg = $("rMsg");
+  const child = f.child.value.trim();
+  if (!child){ msg.textContent = "Напиши имя ребёнка."; msg.className = "msg err"; f.child.focus(); return; }
+  const coming = f.coming.value === "yes";
+  $("rBtn").disabled = true;
+  try {
+    const r = await API.post({ action: "rsvp", child, coming, parent: f.parent.value, contact: f.contact.value, note: f.note.value });
+    if (!r.ok) throw new Error(r.error);
+    msg.textContent = coming ? "Сова доставлена! Ждём тебя в лагере." : "Спасибо, что предупредили. Будем скучать!";
+    msg.className = "msg ok";
+    if (!$("gWho").value) $("gWho").value = child;
+    applyState(r.state);
+  } catch {
+    msg.textContent = "Сова не долетела. Проверь интернет и попробуй ещё раз."; msg.className = "msg err";
+  } finally { $("rBtn").disabled = false; }
+});
+
+/* конверт */
+function openEnvelope(){
+  $("env").classList.add("open");
+  setTimeout(() => $("envScreen").classList.add("gone"), 650);
+}
+$("env").addEventListener("click", openEnvelope);
+document.addEventListener("keydown", e => { if (e.key === "Escape") openEnvelope(); });
+
+renderStatic(); renderWishes(); load();
+</script>
+</body>
+</html>

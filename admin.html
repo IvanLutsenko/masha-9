@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Штаб Хирона — ДР Маши</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Lora:wght@400;600&family=Marck+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="arch">
+    <div class="kicker">Только для родителей</div>
+    <h1>Штаб <em>Хирона</em></h1>
+  </header>
+
+  <form class="panel" id="pinForm">
+    <div class="field">
+      <label for="pin">PIN</label>
+      <input id="pin" inputmode="numeric" autocomplete="off" maxlength="12">
+    </div>
+    <div><button class="btn" type="submit" id="pinBtn">Войти</button></div>
+    <div class="msg" id="pinMsg" role="status"></div>
+  </form>
+
+  <div id="dash" class="dash" hidden>
+    <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён.</div>
+    <div class="tiles">
+      <div class="tile ok"><b id="tYes">0</b><span>придут</span></div>
+      <div class="tile no"><b id="tNo">0</b><span>не придут</span></div>
+      <div class="tile"><b id="tWait">0</b><span>ещё не ответили</span></div>
+      <div class="tile gift"><b id="tGifts">0</b><span id="tGiftsLbl">подарков выбрано</span></div>
+    </div>
+
+    <section>
+      <h2><span class="gr">Ответы</span>Регистрации</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Ребёнок</th><th>Статус</th><th>Родитель</th><th>Контакт</th><th>Комментарий</th></tr></thead>
+        <tbody id="rsvpRows"></tbody>
+      </table></div>
+    </section>
+
+    <section>
+      <h2><span class="gr">Дары</span>Вишлист</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>#</th><th>Подарок</th><th>Кто дарит</th><th></th></tr></thead>
+        <tbody id="giftRows"></tbody>
+      </table></div>
+    </section>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn ghost" type="button" id="refresh">Обновить</button>
+      <button class="btn ghost" type="button" id="logout">Выйти</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+const P = window.PARTY, $ = id => document.getElementById(id);
+// Ожидаемые гости — для счётчика «ещё не ответили». Хранится только в браузере родителя.
+const EXPECTED = 14;
+let pin = "";
+try { pin = sessionStorage.getItem("masha9.pin") || ""; } catch {}
+
+const td = (text, cls) => { const c = document.createElement("td"); c.textContent = text ?? ""; if (cls) c.className = cls; return c; };
+const pill = (text, cls) => { const c = document.createElement("td"); const s = document.createElement("span"); s.className = "pill " + cls; s.textContent = text; c.appendChild(s); return c; };
+
+async function load(){
+  const r = await API.get({ action: "admin", pin });
+  if (!r.ok){ throw new Error(r.error || "fail"); }
+  $("pinForm").hidden = true; $("dash").hidden = false;
+  $("demoNote").hidden = !API.isDemo();
+
+  const yes = r.rsvp.filter(x => x.coming), no = r.rsvp.filter(x => !x.coming);
+  $("tYes").textContent = yes.length; $("tNo").textContent = no.length;
+  $("tWait").textContent = Math.max(0, EXPECTED - r.rsvp.length);
+  $("tGifts").textContent = r.gifts.length; $("tGiftsLbl").textContent = "из " + P.gifts.length + " подарков выбрано";
+
+  const rb = $("rsvpRows"); rb.innerHTML = "";
+  if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 5; rb.appendChild(tr); }
+  [...yes, ...no].forEach(x => {
+    const tr = document.createElement("tr");
+    tr.append(td(x.child), x.coming ? pill("придёт","ok") : pill("не придёт","no"), td(x.parent), td(x.contact), td(x.note, "muted"));
+    rb.appendChild(tr);
+  });
+
+  const byId = {}; r.gifts.forEach(g => byId[g.id] = g);
+  const gb = $("giftRows"); gb.innerHTML = "";
+  P.gifts.forEach((g, i) => {
+    const res = byId[g.id];
+    const tr = document.createElement("tr");
+    tr.append(td(i + 1, "muted"), td(g.title), res ? td(res.who) : pill("свободен","free"));
+    const c = document.createElement("td");
+    if (res){
+      const b = document.createElement("button"); b.className = "btn ghost small"; b.type = "button"; b.textContent = "Освободить";
+      b.onclick = async () => { b.disabled = true; await API.post({ action: "release", giftId: g.id, pin }); load(); };
+      c.appendChild(b);
+    }
+    tr.appendChild(c); gb.appendChild(tr);
+  });
+}
+
+$("pinForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  pin = $("pin").value.trim(); $("pinBtn").disabled = true; $("pinMsg").textContent = "";
+  try { await load(); try { sessionStorage.setItem("masha9.pin", pin); } catch {} }
+  catch (err) { $("pinMsg").textContent = err.message === "pin" ? "Неверный PIN." : "Не удалось загрузить данные."; $("pinMsg").className = "msg err"; }
+  finally { $("pinBtn").disabled = false; }
+});
+$("refresh").onclick = () => load().catch(() => {});
+$("logout").onclick = () => { try { sessionStorage.removeItem("masha9.pin"); } catch {} location.reload(); };
+if (pin) load().catch(() => {});
+</script>
+</body>
+</html>
