@@ -78,9 +78,10 @@
   <div class="meander" aria-hidden="true"></div>
 
   <section aria-labelledby="h-rsvp">
-    <h2 id="h-rsvp"><span class="gr">Ответ сове</span>Ты придёшь?</h2>
+    <h2 id="h-rsvp"><span class="gr">Ответ сове</span><span id="rsvpTitle">Ты придёшь?</span></h2>
     <form class="panel" id="rsvpForm" novalidate>
-      <div class="field">
+      <p class="who" id="whoLine" hidden>Гость: <b id="whoName"></b> · <button type="button" class="linkbtn" id="whoEdit">изменить</button></p>
+      <div class="field" id="childField">
         <label for="rChild">Имя полубога (ребёнка)</label>
         <input id="rChild" name="child" autocomplete="off" required maxlength="60">
       </div>
@@ -89,16 +90,12 @@
         <input type="radio" id="rNo" name="coming" value="no"><label for="rNo">Не получится</label>
       </div>
       <div class="field">
-        <label for="rParent">Родитель</label>
-        <input id="rParent" name="parent" autocomplete="name" maxlength="60">
-      </div>
-      <div class="field">
-        <label for="rContact">Телефон для связи</label>
+        <label for="rContact">Телефон родителя <span class="opt">(необязательно)</span></label>
         <input id="rContact" name="contact" type="tel" autocomplete="tel" maxlength="60" placeholder="+7 …">
       </div>
       <div class="field">
-        <label for="rNote">Аллергии и пожелания</label>
-        <textarea id="rNote" name="note" maxlength="300"></textarea>
+        <label for="rNote">Аллергии, пожелания <span class="opt">(необязательно)</span></label>
+        <input id="rNote" name="note" maxlength="300">
       </div>
       <div><button class="btn" type="submit" id="rBtn">Отправить сову</button></div>
       <div class="msg" id="rMsg" role="status"></div>
@@ -108,7 +105,7 @@
   <section aria-labelledby="h-wish">
     <div>
       <h2 id="h-wish"><span class="gr">Дары для героини</span>Вишлист Маши</h2>
-      <p class="lead">Маша составила список сама. Выбери подарок и нажми «Подарю это», и его увидят занятым все остальные гости.</p>
+      <p class="lead">Маша составила список сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумал — нажми «Отменить».</p>
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
     <ol class="wishes" id="wishes"></ol>
@@ -163,8 +160,13 @@ function renderStatic(){
     $("greet").textContent = "Привет, " + guest + "!";
     $("rChild").value = guest;
     $("gWho").value = guest;
+    $("rsvpTitle").textContent = guest + ", ты придёшь?";
+    $("whoName").textContent = guest;
+    $("whoLine").hidden = false;
+    $("childField").hidden = true;
   }
   $("demoNote").hidden = !API.isDemo();
+  $("whoEdit").onclick = () => { $("childField").hidden = false; $("whoLine").hidden = true; $("rChild").focus(); };
   // отсчёт
   const [y,m,d] = P.date.split("-").map(Number);
   const now = new Date(); now.setHours(0,0,0,0);
@@ -210,7 +212,7 @@ function renderWishes(){
     } else {
       const b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = "Подарю это";
       b.setAttribute("aria-label", "Подарю: " + g.title);
-      b.onclick = () => openGift(g); act.appendChild(b);
+      b.onclick = () => guest ? quickReserve(g, b) : openGift(g); act.appendChild(b);
     }
     ol.appendChild(li);
   });
@@ -254,6 +256,15 @@ $("giftForm").addEventListener("submit", async e => {
   }
 });
 
+async function quickReserve(g, btn){
+  btn.disabled = true; btn.textContent = "Бронирую…";
+  try {
+    const r = await API.post({ action: "reserve", giftId: g.id, giftTitle: g.title, who: guest });
+    if (r.ok){ mine[g.id] = r.token; store.set("masha9.mine", mine); }
+    if (r.state) applyState(r.state); else throw new Error(r.error);
+  } catch { btn.disabled = false; btn.textContent = "Подарю это"; }
+}
+
 async function release(g, btn){
   btn.disabled = true;
   try {
@@ -272,7 +283,7 @@ $("rsvpForm").addEventListener("submit", async e => {
   const coming = f.coming.value === "yes";
   $("rBtn").disabled = true;
   try {
-    const r = await API.post({ action: "rsvp", child, coming, parent: f.parent.value, contact: f.contact.value, note: f.note.value });
+    const r = await API.post({ action: "rsvp", child, coming, parent: "", contact: f.contact.value, note: f.note.value });
     if (!r.ok) throw new Error(r.error);
     msg.textContent = coming ? "Сова доставлена! Ждём тебя в лагере." : "Спасибо, что предупредили. Будем скучать!";
     msg.className = "msg ok";
