@@ -6,7 +6,7 @@
 <title>Маше 9 — Лагерь полукровок</title>
 <meta name="robots" content="noindex">
 <meta property="og:title" content="Маше 9 — приглашение в Лагерь полукровок">
-<meta property="og:description" content="Суббота, 28 ноября. Совиная почта для юных полубогов и волшебников.">
+<meta property="og:description" content="Квест в Лагере полукровок. Совиная почта для юных полубогов и волшебников.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&display=swap" rel="stylesheet">
@@ -45,15 +45,15 @@
       </text>
       <path d="M214 62 L200 88 H212 L204 110 L224 80 H211 Z" fill="#e3b75a"/>
     </svg>
-    <div class="kicker">Совиная почта · 28.11</div>
+    <div class="kicker">Совиная почта · квест</div>
     <h1>Маше исполняется <em>9</em></h1>
   </header>
 
   <article class="letter">
     <div class="crest"><span>Лагерь полукровок</span><span>Домик Гекаты · Хогвартс</span></div>
     <p class="greet" id="greet">Привет, герой!</p>
-    <p id="intro">Тебя ждут в Лагере полукровок на девятом дне рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.</p>
-    <p>Где именно откроется портал, Оракул сообщит совсем скоро.</p>
+    <p id="intro">Тебя ждут в Лагере полукровок на девятом дне рождения Маши. Будут квесты, полубоги, волшебники и торт, достойный Олимпа.</p>
+    <p>Портал откроется в KazQuest, а точный день Оракул сообщит совсем скоро.</p>
     <p class="sign">Маша</p>
     <div class="wax" aria-hidden="true">Ω</div>
   </article>
@@ -64,7 +64,7 @@
       <div class="fact">
         <span class="lbl">Дата</span>
         <span class="val" id="dateVal"></span>
-        <span class="note" id="timeVal">днём, время сообщим</span>
+        <span class="note" id="timeVal">время тоже сообщим</span>
       </div>
       <div class="fact">
         <span class="lbl">Место</span>
@@ -154,13 +154,13 @@ function renderStatic(){
   if (P.time) $("timeVal").textContent = P.time;
   if (P.place){
     $("placeVal").textContent = P.place;
-    const n = $("placeNote"); n.textContent = "";
+    const n = $("placeNote"); n.textContent = P.address ? P.address + " · " : "";
     if (P.mapUrl){ const a = document.createElement("a"); a.href = P.mapUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Открыть в 2ГИС"; n.appendChild(a); }
   }
   if (guest){
     $("envName").textContent = "Для: " + guest;
     $("greet").textContent = Gender.pick(G.g, "Дорогой ", "Дорогая ", "Привет, ") + guest + "!";
-    $("intro").textContent = "Ты " + Gender.pick(G.g, "приглашён", "приглашена", "приглашён(а)") + " в Лагерь полукровок на девятый день рождения Маши. Будут полубоги, волшебники и торт, достойный Олимпа.";
+    $("intro").textContent = "Ты " + Gender.pick(G.g, "приглашён", "приглашена", "приглашён(а)") + " в Лагерь полукровок на девятый день рождения Маши. Будут квесты, полубоги, волшебники и торт, достойный Олимпа.";
     $("rChild").value = guest;
     $("gWho").value = guest;
     $("rsvpTitle").textContent = guest + ", ты придёшь?";
@@ -171,6 +171,7 @@ function renderStatic(){
   $("demoNote").hidden = !API.isDemo();
   $("whoEdit").onclick = () => { $("childField").hidden = false; $("whoLine").hidden = true; $("rChild").focus(); };
   // отсчёт
+  if (!P.date){ $("days").closest(".count").hidden = true; return; }
   const [y,m,d] = P.date.split("-").map(Number);
   const now = new Date(); now.setHours(0,0,0,0);
   const diff = Math.round((new Date(y, m-1, d) - now) / 86400000);

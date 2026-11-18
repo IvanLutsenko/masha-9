@@ -3,11 +3,13 @@ window.PARTY = {
   // URL веб-приложения Apps Script (Deploy → Web app → URL, заканчивается на /exec)
   scriptUrl: "https://script.google.com/macros/s/AKfycbyR7ZXiwEoZtpMUSvDvbPha-Y5SRQsJJOw7J151GLu7K4gftz6vEVzHvUFCNvPczTOsOw/exec",
 
-  date: "2026-11-28",
-  dateText: "Суббота, 28 ноября",
+  date: "",          // "2026-12-05" — пусто = дату скоро сообщим, отсчёт скрыт
+  dateText: "Дату скоро сообщим",
   time: "",      // напр. "14:00–16:00" — пусто = «сообщим позже»
-  place: "",     // напр. "Kyn Art Studio, ТРК Forum, 4 этаж"
-  mapUrl: "",    // ссылка на 2ГИС
+  place: "KazQuest",
+  address: "пр. Райымбека, 120/124",
+  mapUrl: "https://2gis.kz/almaty/geo/9430047374967689/76.942120,43.269789",
+  site: "https://www.instagram.com/kazquest.kz",
 
   // kaspi: ссылка на товар (https://kaspi.kz/shop/p/...) или поисковый запрос — тогда «Искать на Kaspi»
   gifts: [
