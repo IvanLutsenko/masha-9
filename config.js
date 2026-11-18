@@ -3,8 +3,8 @@ window.PARTY = {
   // URL веб-приложения Apps Script (Deploy → Web app → URL, заканчивается на /exec)
   scriptUrl: "https://script.google.com/macros/s/AKfycbyR7ZXiwEoZtpMUSvDvbPha-Y5SRQsJJOw7J151GLu7K4gftz6vEVzHvUFCNvPczTOsOw/exec",
 
-  date: "",          // "2026-12-05" — пусто = дату скоро сообщим, отсчёт скрыт
-  dateText: "Дату скоро сообщим",
+  date: "2026-12-05",
+  dateText: "Суббота, 5 декабря",
   time: "в 12:00",
   place: "KazQuest",
   address: "пр. Райымбека, 120/124",
