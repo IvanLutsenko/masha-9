@@ -76,13 +76,24 @@
         <span class="val" id="dateVal"></span>
         <span class="note" id="timeVal">время тоже сообщим</span>
       </div>
-      <div class="fact">
-        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        <span class="lbl">Портал</span>
-        <span class="val" id="placeVal">Алматы</span>
-        <span class="note" id="placeNote">адрес пришлём, когда выберем площадку</span>
-      </div>
     </div>
+    <a class="omap" id="mapLink" target="_blank" rel="noopener">
+      <div class="omap-head"><span class="omap-title">Карта Оракула</span><span class="omap-sub">портал отмечен крестом</span></div>
+      <svg class="omap-art" viewBox="0 0 340 170" aria-hidden="true">
+        <path d="M0 120 C40 110 60 140 100 130 S170 100 200 116 S280 150 340 128" fill="none" stroke="#7fa3c9" stroke-width="10" opacity=".35"/>
+        <g fill="#7fa35c" opacity=".55"><circle cx="40" cy="40" r="11"/><circle cx="54" cy="50" r="9"/><circle cx="30" cy="56" r="8"/><circle cx="292" cy="38" r="10"/><circle cx="306" cy="48" r="8"/></g>
+        <path d="M120 54 l12 -20 l12 20 Z M138 54 l10 -16 l10 16 Z" fill="#a0784a" opacity=".7"/>
+        <path d="M28 150 C70 140 80 96 120 92 S190 120 214 86 S250 44 262 62" fill="none" stroke="#a3420b" stroke-width="2.4" stroke-dasharray="1 9" stroke-linecap="round"/>
+        <g fill="#5a3c22" opacity=".7"><ellipse cx="44" cy="146" rx="3" ry="5" transform="rotate(-70 44 146)"/><ellipse cx="54" cy="138" rx="3" ry="5" transform="rotate(-60 54 138)"/><ellipse cx="88" cy="110" rx="3" ry="5" transform="rotate(-40 88 110)"/><ellipse cx="98" cy="100" rx="3" ry="5" transform="rotate(-50 98 100)"/></g>
+        <g stroke="#b3261e" stroke-width="5" stroke-linecap="round"><path d="M254 52 L272 70 M272 52 L254 70"/></g>
+        <text x="24" y="166" font-family="Marck Script, cursive" font-size="14" fill="#5a3c22">ты здесь</text>
+        <g transform="translate(316 132)"><circle r="16" fill="none" stroke="#5a3c22" stroke-width="1.2"/><path d="M0 -14 L4 0 L0 14 L-4 0 Z" fill="#b3261e"/><text y="-19" font-size="9" text-anchor="middle" fill="#5a3c22" font-family="Lora, serif">С</text></g>
+      </svg>
+      <div class="omap-foot">
+        <div class="omap-addr"><b id="placeVal">Алматы</b><span id="placeNote">адрес пришлём</span></div>
+        <span class="omap-btn" id="mapBtn">Проложить путь</span>
+      </div>
+    </a>
     <div class="count"><div class="orb"><b id="days">–</b></div><span id="daysLbl">дней до праздника</span></div>
   </section>
 
@@ -188,8 +199,11 @@ function renderStatic(){
   if (P.time) $("timeVal").textContent = P.time;
   if (P.place){
     $("placeVal").textContent = P.place;
-    const n = $("placeNote"); n.textContent = P.address ? P.address + " · " : "";
-    if (P.mapUrl){ const a = document.createElement("a"); a.href = P.mapUrl; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Открыть в 2ГИС"; n.appendChild(a); }
+    $("placeNote").textContent = P.address || "";
+  }
+  if (P.mapUrl){ $("mapLink").href = P.mapUrl; $("mapLink").setAttribute("aria-label", "Открыть в 2ГИС: " + (P.place || "") + ", " + (P.address || "")); }
+  else { $("mapBtn").hidden = true; }
+  {
   }
   if (guest){
     $("envName").textContent = "Для: " + guest;
