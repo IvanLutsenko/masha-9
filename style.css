@@ -238,3 +238,7 @@ footer .hand{font-size:28px}
 .arch .owl{width:104px}
 .peek{top:14px;right:14px;width:48px}
 .panel .who{padding-right:56px}
+.arch .c9{width:110px;height:auto;margin-top:4px;animation:glow 4s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 2px #f2c46a55)}50%{filter:drop-shadow(0 0 8px #f2c46acc)}}
+.sdiv{display:block;width:min(350px,100%);height:auto;margin:0 auto}
+@media (prefers-reduced-motion:reduce){.arch .c9{animation:none}}
