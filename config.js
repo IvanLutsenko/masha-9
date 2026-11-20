@@ -19,7 +19,7 @@ window.PARTY = {
     { id: "canvas",       title: "Холст для рисования",             kaspi: "https://kaspi.kz/shop/p/holst-30h40-na-podramnike-h30-40-168741938/" },
     { id: "cat-lamp",     title: "Ночник в форме кошки",            kaspi: "https://kaspi.kz/shop/p/marco-nochnik-detskii-191465-koshechka-silikon-110070017/" },
     { id: "soap",         title: "Набор для мыловарения",           kaspi: "https://kaspi.kz/shop/p/nabor-dlja-mylovarenija-fantazer-mylo-svoimi-rukami-varezhka-s-pingvinom--185182063/" },
-    { id: "kitten-wear",  title: "Одежда для котёнка",              kaspi: "https://kaspi.kz/shop/p/tolstovka-pchjolka-zheltyi-chernyi-s-131584147/" },
+    { id: "kitten-wear",  title: "Одежда для котёнка" },
     { id: "hp-bedding",   title: "Постельное бельё «Гарри Поттер»", kaspi: "https://kaspi.kz/shop/p/komplekt-1-5-spal-nyi-garri-potter-navolochki-70x70-sm-hlopok-poplin-138774276/" },
     { id: "bunny-charm",  title: "Брелок с водой «зайчик»",         kaspi: "https://kaspi.kz/shop/p/brelok-zhidkost-ju-s-blestkami-na-kljuchi-i-rjukzak-4h12-sm-kost-1-sht-185230773/" },
     { id: "hp-pajama",    title: "Пижама «Гарри Поттер»", note: "рост 144, размер S — сверьте с таблицей продавца", kaspi: "https://kaspi.kz/shop/p/pizhama-harry-potter-bordovyi-153548187/" },
