@@ -23,9 +23,7 @@ window.PARTY = {
     { id: "hp-bedding",   title: "Постельное бельё «Гарри Поттер»", kaspi: "https://kaspi.kz/shop/p/komplekt-1-5-spal-nyi-garri-potter-navolochki-70x70-sm-hlopok-poplin-138774276/" },
     { id: "bunny-charm",  title: "Брелок с водой «зайчик»",         kaspi: "https://kaspi.kz/shop/p/brelok-zhidkost-ju-s-blestkami-na-kljuchi-i-rjukzak-4h12-sm-kost-1-sht-185230773/" },
     { id: "hp-pajama",    title: "Пижама «Гарри Поттер»", note: "рост 144, размер S — сверьте с таблицей продавца", kaspi: "https://kaspi.kz/shop/p/pizhama-harry-potter-bordovyi-153548187/" },
-    { id: "karate-chest", title: "Нагрудник для карате Arawaza WKF, белый", note: "размер XS", kaspi: "https://kaspi.kz/shop/p/arawaza-wkf-approved-belyi-xs-187626948/" },
     { id: "karate-blue",  title: "Накладки для карате Arawaza, синие", note: "размер S", kaspi: "https://kaspi.kz/shop/p/arawaza-nakladki-dlja-karate-sinii-s-164728598/" },
-    { id: "karate-red",   title: "Накладки для карате Arawaza, красные", note: "размер S", kaspi: "https://kaspi.kz/shop/p/arawaza-arawaza-nakladki-dlja-karate-krasnyi-s-164552810/" },
     { id: "doll",         title: "Кукла ручной работы", note: "какую именно — подскажет мама Маши" }
   ]
 };
