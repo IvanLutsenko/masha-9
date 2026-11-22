@@ -285,3 +285,6 @@ footer .hand{font-size:28px}
 @media (prefers-reduced-motion:reduce){.flash.go{animation:none}.lang-stars{animation:none}}
 .letter::before,.letter::after{z-index:1}
 .wax{z-index:2}
+.btn.small{min-height:44px;padding:0 14px}
+.linkbtn{padding:10px 4px;margin:-10px -4px}
+.wishes + .msg, #wMsg{min-height:0}

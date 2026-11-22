@@ -165,6 +165,7 @@
       <p class="lead" data-i18n="wish_lead">Маша составила список сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумаешь — нажми «Отменить».</p>
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
+    <div class="msg" id="wMsg" role="status"></div>
     <ol class="wishes" id="wishes"></ol>
   </section>
 
@@ -291,7 +292,14 @@ function renderWishes(){
   });
 }
 
-function applyState(s){ if (s && s.taken){ state = s; renderWishes(); } }
+function applyState(s){
+  if (!s || !s.taken) return;
+  state = s;
+  let changed = false;
+  for (const id of Object.keys(mine)) if (!s.taken.includes(id)){ delete mine[id]; changed = true; }
+  if (changed) store.set("masha9.mine", mine);
+  renderWishes();
+}
 
 async function load(){
   try { applyState(await API.get({ action: "state" })); }
@@ -329,13 +337,16 @@ $("giftForm").addEventListener("submit", async e => {
   }
 });
 
+function wishMsg(text, ok){ const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : ""); }
 async function quickReserve(g, btn){
-  btn.disabled = true; btn.textContent = T("booking");
+  btn.disabled = true; btn.textContent = T("booking"); wishMsg("");
   try {
     const r = await API.post({ action: "reserve", giftId: g.id, giftTitle: g.title, who: guest });
-    if (r.ok){ mine[g.id] = r.token; store.set("masha9.mine", mine); }
-    if (r.state) applyState(r.state); else throw new Error(r.error);
-  } catch { btn.disabled = false; btn.textContent = T("give"); }
+    if (r.ok){ mine[g.id] = r.token; store.set("masha9.mine", mine); wishMsg(T("wish_ok", { gift: I18N.gift(g).title }), true); }
+    else if (r.error === "taken") wishMsg(T("dlg_taken"));
+    else throw new Error(r.error);
+    applyState(r.state);
+  } catch { wishMsg(T("net_err")); btn.disabled = false; btn.textContent = T("give"); }
 }
 
 async function release(g, btn){
@@ -408,7 +419,7 @@ const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
       requestAnimationFrame(frame);
     }
   }
-  size(); addEventListener("resize", size); requestAnimationFrame(frame);
+  size(); addEventListener("resize", () => { size(); if (calm) frame(0); }); requestAnimationFrame(frame);
 })();
 
 /* конфетти */

@@ -16,7 +16,8 @@ window.Gender = (() => {
   // "Соня.ж" → {name:"Соня", g:"f"}
   function parse(hash){
     const m = hash.match(/^(.*?)(?:\.(ж|м|f|m))?$/i);
-    const name = (m[1] || "").trim();
+    let name = (m[1] || "").trim().replace(/\.+$/, "");
+    name = name.replace(/(^|\s)(\S)/g, (x, a, b) => a + b.toUpperCase());
     const flag = (m[2] || "").toLowerCase();
     const g = flag ? (flag === "ж" || flag === "f" ? "f" : "m") : detect(name);
     return { name, g };

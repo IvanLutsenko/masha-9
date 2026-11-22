@@ -29,16 +29,16 @@
   <div id="dash" class="dash" hidden>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён.</div>
     <div class="tiles">
-      <div class="tile ok"><b id="tYes">0</b><span>придут</span></div>
-      <div class="tile no"><b id="tNo">0</b><span>не придут</span></div>
-      <div class="tile"><b id="tWait">0</b><span>ещё не ответили</span></div>
+      <div class="tile ok"><b id="tYes">0</b><span>приглашений: придут</span></div>
+      <div class="tile no"><b id="tNo">0</b><span>приглашений: не придут</span></div>
+      <div class="tile"><b id="tWait">0</b><span>приглашений без ответа</span></div>
       <div class="tile gift"><b id="tGifts">0</b><span id="tGiftsLbl">подарков выбрано</span></div>
     </div>
 
     <section>
       <h2><span class="gr">Ответы</span>Регистрации</h2>
       <div class="tablewrap"><table class="t-rsvp">
-        <thead><tr><th>Ребёнок</th><th>Статус</th><th>Родитель</th><th>Контакт</th><th>Комментарий</th></tr></thead>
+        <thead><tr><th>Ребёнок</th><th>Статус</th><th>Контакт</th><th>Комментарий</th></tr></thead>
         <tbody id="rsvpRows"></tbody>
       </table></div>
     </section>
@@ -62,8 +62,8 @@
 <script src="api.js?v=26ded7c"></script>
 <script>
 const P = window.PARTY, $ = id => document.getElementById(id);
-// Ожидаемые гости — для счётчика «ещё не ответили». Хранится только в браузере родителя.
-const EXPECTED = 12;   // приглашений (братья и сёстры — одно)
+// Сколько разослано приглашений (братья и сёстры — одно) — для счётчика «без ответа».
+const EXPECTED = 12;
 let pin = "";
 try { pin = sessionStorage.getItem("masha9.pin") || ""; } catch {}
 
@@ -82,23 +82,29 @@ async function load(){
   $("tGifts").textContent = r.gifts.length; $("tGiftsLbl").textContent = "из " + P.gifts.length + " подарков выбрано";
 
   const rb = $("rsvpRows"); rb.innerHTML = "";
-  if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 5; rb.appendChild(tr); }
+  if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 4; rb.appendChild(tr); }
   [...yes, ...no].forEach(x => {
     const tr = document.createElement("tr");
-    tr.append(td(x.child), x.coming ? pill("придёт","ok") : pill("не придёт","no"), td(x.parent), td(x.contact), td(x.note, "muted"));
+    tr.append(td(x.child), x.coming ? pill("придёт","ok") : pill("не придёт","no"), td(x.contact), td(x.note, "muted"));
     rb.appendChild(tr);
   });
 
   const byId = {}; r.gifts.forEach(g => byId[g.id] = g);
   const gb = $("giftRows"); gb.innerHTML = "";
-  P.gifts.forEach((g, i) => {
+  const known = new Set(P.gifts.map(g => g.id));
+  const extra = r.gifts.filter(g => !known.has(g.id)).map(g => ({ id: g.id, title: (g.title || g.id) + " (нет в списке)" }));
+  [...P.gifts, ...extra].forEach((g, i) => {
     const res = byId[g.id];
     const tr = document.createElement("tr");
     tr.append(td(i + 1, "muted"), td(g.title), res ? td(res.who) : pill("свободен","free"));
     const c = document.createElement("td");
     if (res){
       const b = document.createElement("button"); b.className = "btn ghost small"; b.type = "button"; b.textContent = "Освободить";
-      b.onclick = async () => { b.disabled = true; await API.post({ action: "release", giftId: g.id, pin }); load(); };
+      b.onclick = async () => {
+        b.disabled = true;
+        try { await API.post({ action: "release", giftId: g.id, pin }); await load(); }
+        catch { b.disabled = false; b.textContent = "Ошибка, ещё раз"; }
+      };
       c.appendChild(b);
     }
     tr.appendChild(c); gb.appendChild(tr);
@@ -109,12 +115,12 @@ $("pinForm").addEventListener("submit", async e => {
   e.preventDefault();
   pin = $("pin").value.trim(); $("pinBtn").disabled = true; $("pinMsg").textContent = "";
   try { await load(); try { sessionStorage.setItem("masha9.pin", pin); } catch {} }
-  catch (err) { $("pinMsg").textContent = err.message === "pin" ? "Неверный PIN." : "Не удалось загрузить данные."; $("pinMsg").className = "msg err"; }
+  catch (err) { $("pinMsg").textContent = err.message === "pin" ? "Неверный PIN." : err.message === "locked" ? "Слишком много попыток. Подождите 15 минут." : "Не удалось загрузить данные."; $("pinMsg").className = "msg err"; }
   finally { $("pinBtn").disabled = false; }
 });
 $("refresh").onclick = () => load().catch(() => {});
 $("logout").onclick = () => { try { sessionStorage.removeItem("masha9.pin"); } catch {} location.reload(); };
-if (pin) load().catch(() => {});
+if (pin) load().catch(() => { $("pinMsg").textContent = "Войдите заново."; $("pinMsg").className = "msg err"; });
 </script>
 </body>
 </html>

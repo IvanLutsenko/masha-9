@@ -9,13 +9,19 @@ const GIFTS = 'Подарки';
 const RSVP_HEAD = ['Когда', 'Ребёнок', 'Придёт', 'Родитель', 'Контакт', 'Комментарий'];
 const GIFT_HEAD = ['Когда', 'ID подарка', 'Подарок', 'Кто дарит', 'Токен'];
 
+// Должно совпадать с id в config.js — чужие id отклоняются.
+const ALLOWED_IDS = ['tab-paws','paint-num','canvas','cat-lamp','soap','bedding-glow','bunny-charm','hp-pajama',
+  'hp-science','hp-mug','hp-rug','hp-bag','mc-lego','karate-chest','karate-blue','doll'];
+const MAX_RESERVES_PER_10MIN = 20;   // от спама скриптом
+const MAX_PIN_FAILS = 5;             // потом блокировка на 15 минут
+
 // PIN админки — константа ADMIN_PIN в Secrets.gs (не в git).
 // Листы создаются сами при первом обращении.
 
 function doGet(e) {
   const p = e.parameter || {};
   if (p.action === 'state') return json_(publicState_());
-  if (p.action === 'admin') return pinOk_(p.pin) ? json_(adminState_()) : json_({ ok: false, error: 'pin' });
+  if (p.action === 'admin') return checkPin_(p.pin) ? json_(adminState_()) : json_({ ok: false, error: pinLocked_() ? 'locked' : 'pin' });
   return json_({ ok: false, error: 'unknown action' });
 }
 
@@ -47,7 +53,8 @@ function rsvp_(b) {
 function reserve_(b) {
   const id = clean_(b.giftId, 40);
   const who = clean_(b.who, 60);
-  if (!/^[a-z0-9-]+$/.test(id)) return { ok: false, error: 'bad gift' };
+  if (ALLOWED_IDS.indexOf(id) === -1) return { ok: false, error: 'bad gift' };
+  if (!rateOk_('reserve', MAX_RESERVES_PER_10MIN)) return { ok: false, error: 'busy' };
   if (!who) return { ok: false, error: 'Укажите, от кого подарок' };
   if (takenIds_().indexOf(id) !== -1) return { ok: false, error: 'taken', state: publicState_() };
   const token = Utilities.getUuid();
@@ -59,7 +66,7 @@ function release_(b) {
   const id = clean_(b.giftId, 40);
   const sh = sheet_(GIFTS, GIFT_HEAD);
   const rows = sh.getDataRange().getValues();
-  const admin = pinOk_(b.pin);
+  const admin = b.pin ? checkPin_(b.pin) : false;
   for (let i = rows.length - 1; i >= 1; i--) {
     if (rows[i][1] === id && (admin || (b.token && rows[i][4] === b.token))) {
       sh.deleteRow(i + 1);
@@ -72,7 +79,7 @@ function release_(b) {
 /* ---------- чтение ---------- */
 
 function publicState_() {
-  return { ok: true, taken: takenIds_(), coming: latestRsvp_().filter(r => r.coming).length };
+  return { ok: true, taken: takenIds_() };
 }
 
 function adminState_() {
@@ -103,6 +110,25 @@ function sheet_(name, head) {
   let sh = ss.getSheetByName(name);
   if (!sh) { sh = ss.insertSheet(name); sh.appendRow(head); sh.setFrozenRows(1); }
   return sh;
+}
+// PIN с блокировкой после MAX_PIN_FAILS неудачных попыток
+function pinLocked_() {
+  return Number(CacheService.getScriptCache().get('pinFails') || 0) >= MAX_PIN_FAILS;
+}
+function checkPin_(pin) {
+  if (pinLocked_()) return false;
+  if (pinOk_(pin)) return true;
+  const c = CacheService.getScriptCache();
+  c.put('pinFails', String(Number(c.get('pinFails') || 0) + 1), 15 * 60);
+  return false;
+}
+// не больше n действий за 10 минут на всех
+function rateOk_(key, n) {
+  const c = CacheService.getScriptCache();
+  const v = Number(c.get('rate_' + key) || 0);
+  if (v >= n) return false;
+  c.put('rate_' + key, String(v + 1), 10 * 60);
+  return true;
 }
 function pinOk_(pin) {
   return typeof ADMIN_PIN !== 'undefined' && !!ADMIN_PIN && String(pin || '') === String(ADMIN_PIN);
