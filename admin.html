@@ -69,6 +69,7 @@ let pin = "";
 try { pin = sessionStorage.getItem("masha9.pin") || ""; } catch {}
 
 const td = (text, cls) => { const c = document.createElement("td"); c.textContent = text ?? ""; if (cls) c.className = cls; return c; };
+const telTd = v => { const c = document.createElement("td"); const p = String(v || "").replace(/[^\d+]/g, ""); if (p.length >= 6){ const a = document.createElement("a"); a.href = "tel:" + p; a.textContent = v; c.appendChild(a); } else c.textContent = v || ""; return c; };
 const pill = (text, cls) => { const c = document.createElement("td"); const s = document.createElement("span"); s.className = "pill " + cls; s.textContent = text; c.appendChild(s); return c; };
 
 async function load(){
@@ -86,7 +87,7 @@ async function load(){
   if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 4; rb.appendChild(tr); }
   [...yes, ...no].forEach(x => {
     const tr = document.createElement("tr");
-    tr.append(td(x.detail && /,/.test(x.detail) ? x.child + " (" + x.detail + ")" : x.child), x.coming ? pill(x.kids > 1 ? "придут: " + x.kids : "придёт","ok") : pill("не придёт","no"), td(x.contact), td(x.note, "muted"));
+    tr.append(td(x.detail && /,/.test(x.detail) ? x.child + " (" + x.detail + ")" : x.child), x.coming ? pill(x.kids > 1 ? "придут: " + x.kids : "придёт","ok") : pill("не придёт","no"), telTd(x.contact), td(x.note, "muted"));
     rb.appendChild(tr);
   });
 
@@ -102,6 +103,7 @@ async function load(){
     if (res){
       const b = document.createElement("button"); b.className = "btn ghost small"; b.type = "button"; b.textContent = "Освободить";
       b.onclick = async () => {
+        if (!confirm("Освободить «" + g.title + "»? Бронь " + res.who + " пропадёт.")) return;
         b.disabled = true;
         try { await API.post({ action: "release", giftId: g.id, pin }); await load(); }
         catch { b.disabled = false; b.textContent = "Ошибка, ещё раз"; }

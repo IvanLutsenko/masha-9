@@ -303,3 +303,18 @@ footer .hand{font-size:28px}
 .lang-switch{position:absolute;top:max(10px,env(safe-area-inset-top));right:10px;z-index:9;display:flex;gap:2px;padding:3px;border-radius:999px;background:#0d1530cc;border:1px solid #e3b75a55;backdrop-filter:blur(6px)}
 .lang-switch button{font:700 12px/1 var(--f-body);letter-spacing:.06em;color:var(--muted);background:none;border:0;border-radius:999px;min-width:44px;min-height:32px;cursor:pointer}
 .lang-switch button[aria-current="true"]{background:var(--gold);color:var(--sky)}
+
+/* v4 */
+:root:lang(kk){--f-hand:"Bad Script","Lora",cursive}
+.wish .act .btn:not(.ghost){background:transparent;color:#a34c10;border:1.5px solid #c9692a;box-shadow:none;font-size:14px;padding:0 12px;min-height:44px}
+.wish .act .btn:not(.ghost):hover{background:#f07a2814}
+.wish.mine .num{background:radial-gradient(circle at 35% 30%,#f2d27a,#b5852a);color:#3a2a18}
+@media (max-width:480px){
+  .wish{grid-template-columns:34px 1fr auto}
+  .wish .num{width:34px;height:34px;font-size:15px}
+  .wish .act{grid-column:auto;justify-content:flex-end}
+  .wish.mine .act,.wish.taken .act{grid-column:2 / -1;justify-content:flex-start}
+}
+dialog .confirm{margin:0;font-size:17px}
+.adult{font-size:16px}
+.lang-switch button{min-height:40px}

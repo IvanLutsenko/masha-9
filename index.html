@@ -13,7 +13,7 @@
 <meta property="og:description" content="Суббота, 5 декабря, 12:00. Квест в Лагере полукровок. Совиная почта для юных полубогов и волшебников.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=Cormorant+SC:wght@600;700&family=Philosopher:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700&family=Cormorant+SC:wght@600;700&family=Philosopher:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&family=Bad+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=da3bdf9">
 </head>
 <body>
@@ -83,11 +83,11 @@
     <div class="crest"><span data-i18n="crest_l">Лагерь полукровок</span><span data-i18n="crest_r">Домик Гекаты · Хогвартс</span></div>
     <p class="greet" id="greet">Привет, герой!</p>
     <p id="intro">Тебя ждут в Лагере полукровок на девятом дне рождения Маши. Будут квесты, полубоги, волшебники и торт, достойный Олимпа.</p>
-    <p data-i18n="portal">Портал откроется в субботу, 5 декабря, в 12:00 — в KazQuest.</p>
+    <p data-i18n="portal">Портал откроется в субботу, 5 декабря, в 12:00 — в KazQuest.</p>
     <p class="sign">Маша</p>
     <div class="wax" aria-hidden="true">Ω</div>
   </article>
-  <a class="btn cta" href="#h-rsvp" data-i18n="cta">Ответить сове ↓</a>
+  <a class="btn cta" href="#h-rsvp" id="ctaBtn" data-i18n="cta">Ответить сове ↓</a>
 
   <section aria-labelledby="h-when" style="margin-top:10px">
     <h2 id="h-when"><span class="gr" data-i18n="when_gr">Миссия</span><span data-i18n="when_h">Когда и где</span></h2>
@@ -147,7 +147,7 @@
     <h2 id="h-rsvp"><span class="gr" data-i18n="rsvp_gr">Ответ сове</span><span id="rsvpTitle">Ты придёшь?</span></h2>
     <form class="panel" id="rsvpForm" novalidate>
       <svg class="peek" viewBox="0 0 60 44" aria-hidden="true"><path d="M6 44 C6 18 16 8 30 8 S54 18 54 44Z" fill="#8c6a4e"/><path d="M12 10 L18 18 M48 10 L42 18" stroke="#8c6a4e" stroke-width="5" stroke-linecap="round"/><circle cx="22" cy="24" r="7" fill="#f3e6c8"/><circle cx="38" cy="24" r="7" fill="#f3e6c8"/><circle class="pupil" cx="23" cy="25" r="3.4" fill="#0d1530"/><circle class="pupil" cx="37" cy="25" r="3.4" fill="#0d1530"/><path d="M27 30 L30 35 L33 30Z" fill="#f07a28"/></svg>
-      <p class="who" id="whoLine" hidden><span data-i18n="who">Гость:</span> <b id="whoName"></b> · <button type="button" class="linkbtn" id="whoEdit" data-i18n="who_edit">изменить</button></p>
+      <p class="who" id="whoLine" hidden><span id="whoLbl" data-i18n="who">Гость:</span> <b id="whoName"></b> · <button type="button" class="linkbtn" id="whoEdit" data-i18n="who_edit">изменить</button></p>
       <div class="field" id="childField">
         <label for="rChild" data-i18n="child_lbl">Имя полубога (ребёнка)</label>
         <input id="rChild" name="child" autocomplete="off" required maxlength="60">
@@ -157,6 +157,7 @@
         <input type="radio" id="rYes" name="coming" value="yes" checked><label for="rYes" id="rYesLbl" data-i18n="yes">Приду!</label>
         <input type="radio" id="rNo" name="coming" value="no"><label for="rNo" data-i18n="no">Не получится</label>
       </div>
+      <label class="kid adult" for="rAdult"><input type="checkbox" id="rAdult"><span data-i18n="adult_stays">Кто-то из родителей останется с нами</span></label>
       <div class="field">
         <label for="rContact"><span data-i18n="phone_lbl">Телефон родителя</span> <span class="opt" data-i18n="opt">(необязательно)</span></label>
         <input id="rContact" name="contact" type="tel" autocomplete="tel" maxlength="60" placeholder="+7 …">
@@ -173,7 +174,7 @@
   <section aria-labelledby="h-wish">
     <div>
       <h2 id="h-wish" class="with-ico"><svg class="chest" viewBox="0 0 48 40" aria-hidden="true"><path d="M4 18 C4 8 12 4 24 4 S44 8 44 18Z" fill="#a0602a"/><rect x="4" y="18" width="40" height="18" rx="2" fill="#7a4a22"/><path d="M4 18h40M14 4v32M34 4v32" stroke="#e3b75a" stroke-width="2.4"/><rect x="20" y="16" width="8" height="9" rx="1.5" fill="#e3b75a"/></svg><span><span class="gr" data-i18n="wish_gr">Дары для героини</span><span data-i18n="wish_h">Вишлист Маши</span></span></h2>
-      <p class="lead" data-i18n="wish_lead">Идеи для подарков от Маши — не обязательно ограничиваться ими, своё тоже можно. Список Маша составила сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумаешь — нажми «Отменить».</p>
+      <p class="lead" data-i18n="wish_lead">Идеи от Маши — можно подарить и своё. «Подарю это» займёт подарок для остальных, «Отменить» — освободит.</p>
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
     <div class="werr" id="wErr" hidden><span data-i18n="load_err">Не удалось узнать, какие подарки уже выбраны.</span> <button type="button" class="btn ghost small" id="wRetry" data-i18n="retry">Повторить</button></div>
@@ -191,14 +192,15 @@
 <dialog id="giftDlg">
   <form method="dialog" id="giftForm">
     <h3 id="giftDlgTitle">Подарю это</h3>
-    <div class="field">
+    <p class="confirm" id="gConfirm" hidden></p>
+    <div class="field" id="gWhoField">
       <label for="gWho" data-i18n="dlg_who">От кого подарок</label>
       <input id="gWho" maxlength="60" required placeholder="напр. Соня" data-i18n-ph="dlg_ph">
     </div>
     <div class="msg" id="gMsg" role="status"></div>
     <div class="row">
       <button class="btn ghost" value="cancel" type="button" id="gCancel" data-i18n="dlg_cancel">Отмена</button>
-      <button class="btn" type="submit" id="gOk" data-i18n="dlg_ok">Забронировать</button>
+      <button class="btn" type="submit" id="gOk" data-i18n="dlg_ok">Подарю</button>
     </div>
   </form>
 </dialog>
@@ -219,7 +221,14 @@ let state = { taken: [], coming: 0 };
 let mine = store.get("masha9.mine", {});   // giftId -> token
 
 /* гости из ссылки: …/#Соня или …/#Прохор+Вера (братья и сёстры — одно приглашение) */
-const GS = (() => { try { return decodeURIComponent(location.hash.slice(1)).slice(0, 80).split("+").map(x => Gender.parse(x)).filter(x => x.name); } catch { return []; } })();
+const GS = (() => {
+  try {
+    let raw = decodeURIComponent(location.hash.slice(1)).slice(0, 80);
+    if (raw && document.getElementById(raw)) raw = store.get("masha9.hash", "");   // это якорь страницы, а не имя
+    else if (raw) store.set("masha9.hash", raw);
+    return raw.split("+").map(x => Gender.parse(x)).filter(x => x.name);
+  } catch { return []; }
+})();
 const G = GS[0] || { name: "", g: null };
 const many = GS.length > 1;
 const guest = GS.map(x => x.name).join(" и ");            // для таблицы — всегда по-русски
@@ -244,13 +253,13 @@ function renderStatic(){
     $("gWho").value = guest;
     $("rsvpTitle").textContent = many ? T("rsvp_h_pl", { name: guestShown(true) }) : T("rsvp_h_name", { name: guest, g: G.g, voc: true });
     $("whoName").textContent = many ? guestShown(false) : guest;
-    if (many){ $("rYesLbl").textContent = T("yes_pl"); }
+    if (many){ $("rYesLbl").textContent = T("yes_pl"); $("whoLbl").textContent = T("who_pl"); }
     $("whoLine").hidden = false;
     $("childField").hidden = true;
   }
   else { $("greet").textContent = T("greet"); $("intro").textContent = T("intro"); $("rsvpTitle").textContent = T("rsvp_h"); }
   $("demoNote").hidden = !API.isDemo();
-  renderKids();
+  renderKids(); showSaved();
   document.querySelectorAll(".lang-switch button").forEach(b => b.setAttribute("aria-current", b.dataset.lang === I18N.lang ? "true" : "false"));
   $("whoEdit").onclick = () => { $("childField").hidden = false; $("whoLine").hidden = true; $("kidsBox").hidden = true; $("comingSeg").hidden = false; $("rChild").value = ""; $("rChild").focus(); };
   // отсчёт
@@ -262,7 +271,7 @@ function renderStatic(){
     const n10 = diff % 10, n100 = diff % 100;
     $("days").textContent = diff;
     $("daysLbl").textContent = T("days")(diff);
-  } else if (diff === 0){ $("days").textContent = T("today"); $("daysLbl").textContent = ""; }
+  } else if (diff === 0){ $("days").textContent = "✦"; $("daysLbl").textContent = T("today"); }
   else { $("days").textContent = "✓"; $("daysLbl").textContent = T("after"); }
 }
 
@@ -310,7 +319,7 @@ function renderWishes(){
       const b = document.createElement("button"); b.className = "btn"; b.type = "button";
       b.textContent = loaded ? T("give") : T("loading"); b.disabled = !loaded;
       b.setAttribute("aria-label", T("give_aria") + L.title);
-      b.onclick = () => guest ? quickReserve(g, b) : openGift(g); act.appendChild(b);
+      b.onclick = () => openGift(g); act.appendChild(b);
     }
     ol.appendChild(li);
   });
@@ -343,12 +352,13 @@ $("wRetry").onclick = () => { $("wErr").hidden = true; load(); };
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") load(); });
 
 /* бронь: id брони создаёт телефон — повтор после обрыва связи не плодит дубли */
+const MAX_MINE = 3;   // не больше трёх подарков на одно приглашение
 const newRid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
 function wishMsg(text, ok, g){
   const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : "");
   const card = g && [...document.querySelectorAll(".wish")][P.gifts.indexOf(g)];
   if (card && text){ card.after(m); } else if (!text) { $("wishes").before(m); }
-  const a = g && giftLink(g); if (a){ m.append(" "); m.appendChild(a); }
+  const a = ok && g && giftLink(g); if (a){ m.append(" "); m.appendChild(a); }
 }
 async function reserve(g, who){
   const rid = mine[g.id] && mine[g.id] !== "name" ? mine[g.id] : newRid();
@@ -364,7 +374,11 @@ async function reserve(g, who){
 let current = null;
 function openGift(g){
   current = g;
+  if (guest && Object.keys(mine).length >= MAX_MINE){ wishMsg(T("limit"), false, g); return; }
   $("giftDlgTitle").textContent = I18N.gift(g).title;
+  $("gWhoField").hidden = !!guest;
+  $("gConfirm").hidden = !guest;
+  $("gConfirm").textContent = guest ? T("confirm_from", { name: many ? I18N.names(GS, false) : guest }) : "";
   $("gMsg").textContent = ""; $("gMsg").className = "msg";
   $("gOk").disabled = false;
   $("giftDlg").showModal();
@@ -373,13 +387,13 @@ function openGift(g){
 $("gCancel").onclick = () => $("giftDlg").close();
 $("giftForm").addEventListener("submit", async e => {
   e.preventDefault();
-  const who = $("gWho").value.trim();
+  const who = guest || $("gWho").value.trim();
   if (!who){ $("gMsg").textContent = T("dlg_need"); $("gMsg").className = "msg err"; return; }
   $("gOk").disabled = true;
   try {
     const r = await reserve(current, who);
     if (r.ok){ $("giftDlg").close(); wishMsg(T("wish_ok", { gift: I18N.gift(current).title }), true, current); }
-    else if (r.error === "taken"){ $("gMsg").textContent = T("dlg_taken"); $("gMsg").className = "msg err"; }
+    else if (["taken", "limit", "busy", "bad gift"].includes(r.error)){ $("gMsg").textContent = T({ taken: "dlg_taken", limit: "limit", busy: "busy", "bad gift": "bad_gift" }[r.error]); $("gMsg").className = "msg err"; }
     else throw new Error(r.error);
   } catch {
     $("gMsg").textContent = T("net_err"); $("gMsg").className = "msg err";
@@ -411,8 +425,11 @@ async function release(g, btn){
 const kidChecked = GS.map(() => true);
 function renderKids(){
   const box = $("kidsBox"); box.innerHTML = "";
-  if (!many) { box.hidden = true; $("comingSeg").hidden = false; return; }
-  box.hidden = false; $("comingSeg").hidden = true;
+  $("comingSeg").hidden = false;
+  const yes = $("rYes").checked;
+  $("rAdult").closest(".adult").hidden = !yes;
+  if (!many || !yes || $("childField").hidden === false) { box.hidden = true; return; }
+  box.hidden = false;
   const lbl = document.createElement("p"); lbl.className = "kids-lbl"; lbl.textContent = T("kids_lbl"); box.appendChild(lbl);
   GS.forEach((x, i) => {
     const id = "kid" + i;
@@ -423,14 +440,22 @@ function renderKids(){
     box.appendChild(w);
   });
 }
+document.querySelectorAll('#comingSeg input').forEach(r => r.addEventListener("change", renderKids));
+$("ctaBtn").addEventListener("click", e => { e.preventDefault(); $("h-rsvp").scrollIntoView({ behavior: calm ? "auto" : "smooth" }); });
+const rsvpKey = "masha9.rsvp." + (guest || "-");
+function showSaved(){
+  const r = store.get(rsvpKey, null); if (!r) return;
+  $("rMsg").textContent = T(r.coming ? "saved_yes" : "saved_no"); $("rMsg").className = "msg ok";
+}
 $("rsvpForm").addEventListener("submit", async e => {
   e.preventDefault();
   const f = e.target, msg = $("rMsg");
   const child = f.child.value.trim();
   if (!child){ msg.textContent = T("need_child"); msg.className = "msg err"; f.child.focus(); return; }
   let kids, coming;
+  const saidYes = f.coming.value === "yes";
   if (many && child === guest){
-    kids = GS.map((x, i) => ({ name: x.name, coming: $("kid" + i).checked }));
+    kids = GS.map((x, i) => ({ name: x.name, coming: saidYes && $("kid" + i).checked }));
     coming = kids.some(k => k.coming);
   } else {
     coming = f.coming.value === "yes";
@@ -438,8 +463,10 @@ $("rsvpForm").addEventListener("submit", async e => {
   }
   $("rBtn").disabled = true;
   try {
-    const r = await API.post({ action: "rsvp", child, coming, kids, contact: f.contact.value, note: f.note.value });
+    const note = (coming && $("rAdult").checked ? "[родитель останется] " : "") + f.note.value;
+    const r = await API.post({ action: "rsvp", child, coming, kids, adult: coming && $("rAdult").checked, contact: f.contact.value, note });
     if (!r.ok) throw new Error(r.error);
+    store.set(rsvpKey, { coming, n: kids.filter(k => k.coming).length, at: Date.now() });
     const n = kids.filter(k => k.coming).length;
     msg.textContent = coming ? T(n > 1 ? "sent_yes_pl" : "sent_yes") : T("sent_no");
     if (coming) burst();
@@ -458,8 +485,9 @@ function openEnvelope(){
     $("envScreen").classList.add("gone");
     $("langScreen").hidden = false;
     const prev = store.get("masha9.lang", null);
-    const btn = document.querySelector(`.lang-btn[data-lang="${prev}"]`) || document.querySelector(".lang-btn");
-    btn.classList.add("last"); btn.focus();
+    const btn = document.querySelector(`.lang-btn[data-lang="${prev}"]`);
+    if (btn) btn.classList.add("last");
+    (btn || document.querySelector(".lang-btn")).focus();
   }, 650);
 }
 function enterPortal(lang){
@@ -492,7 +520,8 @@ const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
       requestAnimationFrame(frame);
     }
   }
-  size(); addEventListener("resize", () => { size(); if (calm) frame(0); }); requestAnimationFrame(frame);
+  let lastW = innerWidth;
+  size(); addEventListener("resize", () => { if (innerWidth === lastW) return; lastW = innerWidth; size(); if (calm) frame(0); }); requestAnimationFrame(frame);
 })();
 
 /* конфетти */
