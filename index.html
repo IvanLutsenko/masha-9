@@ -117,7 +117,7 @@
         <span class="omap-btn" id="mapBtn" data-i18n="map_btn">Проложить путь</span>
       </div>
     </a>
-    <div class="count"><div class="orb"><b id="days">–</b></div><span id="daysLbl">дней до праздника</span></div>
+    <div class="count"><div class="orb"><b id="days">✦</b></div><span id="daysLbl">дней до праздника</span></div>
   </section>
 
   <section aria-labelledby="h-route">
@@ -281,7 +281,10 @@ function giftLink(g){
 
 let loaded = false, loadFailed = false;
 function renderWishes(){
-  const ol = $("wishes"); ol.innerHTML = "";
+  const ol = $("wishes");
+  const wm = $("wMsg"), at = wm && wm.previousElementSibling && wm.parentNode === ol ? [...ol.children].filter(x => x.classList.contains("wish")).indexOf(wm.previousElementSibling) : -1;
+  if (wm && wm.parentNode === ol) ol.before(wm);
+  ol.innerHTML = "";
   $("wErr").hidden = !loadFailed;
   P.gifts.forEach((g, i) => {
     const taken = state.taken.includes(g.id);
@@ -311,13 +314,18 @@ function renderWishes(){
     }
     ol.appendChild(li);
   });
+  if (at >= 0 && wm && wm.textContent) ol.children[at] && ol.children[at].after(wm);   // сообщение остаётся у своей карточки
 }
 
 function applyState(s){
   if (!s || !s.taken) return;
   state = s;
   let changed = false;
-  for (const id of Object.keys(mine)) if (!s.taken.includes(id)){ delete mine[id]; changed = true; }
+  for (const id of Object.keys(mine)) {
+    const gone = !s.taken.includes(id);
+    const notOurs = guest && Array.isArray(s.mine) && !s.mine.includes(id);   // кто-то другой занял после того, как нашу бронь освободили
+    if (gone || notOurs){ delete mine[id]; changed = true; }
+  }
   // брони, сделанные по этой же личной ссылке с другого устройства
   for (const id of (s.mine || [])) if (!mine[id]){ mine[id] = "name"; changed = true; }
   if (changed) store.set("masha9.mine", mine);
@@ -338,6 +346,8 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 const newRid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
 function wishMsg(text, ok, g){
   const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : "");
+  const card = g && [...document.querySelectorAll(".wish")][P.gifts.indexOf(g)];
+  if (card && text){ card.after(m); } else if (!text) { $("wishes").before(m); }
   const a = g && giftLink(g); if (a){ m.append(" "); m.appendChild(a); }
 }
 async function reserve(g, who){
@@ -382,9 +392,9 @@ async function quickReserve(g, btn){
   try {
     const r = await reserve(g, guest);
     if (r.ok) wishMsg(T("wish_ok", { gift: I18N.gift(g).title }), true, g);
-    else if (r.error === "taken") wishMsg(T("dlg_taken"));
+    else if (r.error === "taken") wishMsg(T("dlg_taken"), false, g);
     else throw new Error(r.error);
-  } catch { wishMsg(T("net_err")); btn.disabled = false; btn.textContent = T("give"); }
+  } catch { wishMsg(T("net_err"), false, g); btn.disabled = false; btn.textContent = T("give"); }
 }
 
 async function release(g, btn){
@@ -398,6 +408,7 @@ async function release(g, btn){
 }
 
 /* RSVP */
+const kidChecked = GS.map(() => true);
 function renderKids(){
   const box = $("kidsBox"); box.innerHTML = "";
   if (!many) { box.hidden = true; $("comingSeg").hidden = false; return; }
@@ -406,8 +417,9 @@ function renderKids(){
   GS.forEach((x, i) => {
     const id = "kid" + i;
     const w = document.createElement("label"); w.className = "kid"; w.htmlFor = id;
-    w.innerHTML = `<input type="checkbox" id="${id}" checked><span></span>`;
+    w.innerHTML = `<input type="checkbox" id="${id}"><span></span>`;
     w.querySelector("span").textContent = x.name;
+    const cb = w.querySelector("input"); cb.checked = kidChecked[i]; cb.onchange = () => { kidChecked[i] = cb.checked; };
     box.appendChild(w);
   });
 }

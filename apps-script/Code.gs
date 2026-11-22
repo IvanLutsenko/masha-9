@@ -58,7 +58,6 @@ function reserve_(b) {
   const id = clean_(b.giftId, 40);
   const who = clean_(b.who, 60);
   if (ALLOWED_IDS.indexOf(id) === -1) return { ok: false, error: 'bad gift' };
-  if (!rateOk_('reserve', MAX_RESERVES_PER_10MIN)) return { ok: false, error: 'busy' };
   if (!who) return { ok: false, error: 'Укажите, от кого подарок' };
   const rid = /^[A-Za-z0-9-]{8,64}$/.test(String(b.rid || '')) ? String(b.rid) : Utilities.getUuid();
   const rows = sheet_(GIFTS, GIFT_HEAD).getDataRange().getValues().slice(1);
@@ -67,6 +66,7 @@ function reserve_(b) {
     if (existing[4] === rid) return { ok: true, token: rid, state: publicState_(who) };   // повтор той же брони
     return { ok: false, error: 'taken', state: publicState_(who) };
   }
+  if (!rateOk_('reserve', MAX_RESERVES_PER_10MIN)) return { ok: false, error: 'busy' };
   sheet_(GIFTS, GIFT_HEAD).appendRow([new Date(), id, clean_(b.giftTitle, 80), who, rid]);
   return { ok: true, token: rid, state: publicState_(who) };
 }
