@@ -268,7 +268,7 @@ function renderWishes(){
     const kh = kaspiHref(g.kaspi);
     if (kh && !taken){
       if (L.note) d.append(" · ");
-      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = /^https?:/.test(g.kaspi) ? T("kaspi_see") : T("kaspi_find");
+      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = /^https?:/.test(g.kaspi) ? T("kaspi_see", { shop: /wildberries/.test(g.kaspi) ? "Wildberries" : "Kaspi" }) : T("kaspi_find");
       d.appendChild(a);
     }
     if (!d.childNodes.length) d.remove();
