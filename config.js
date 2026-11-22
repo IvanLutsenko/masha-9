@@ -28,6 +28,6 @@ window.PARTY = {
     { id: "karate-chest", title: "Нагрудник для карате Arawaza WKF, белый", note: "размер XS", kaspi: "https://kaspi.kz/shop/p/arawaza-wkf-approved-belyi-xs-187626948/" },
     { id: "karate-blue",  title: "Накладки для карате Arawaza, синие", note: "размер S", kaspi: "https://kaspi.kz/shop/p/arawaza-nakladki-dlja-karate-sinii-s-164728598/" },
     { id: "mc-lego",      title: "Конструктор Minecraft, 404 детали", kaspi: "https://kaspi.kz/shop/p/konstruktor-minecraft-minecraft-366b10-detalei-404-sht-181689367/" },
-    { id: "doll",         title: "Кукла ручной работы", note: "какую именно — подскажет мама Маши" }
+    { id: "doll",         title: "Кукла ручной работы", note: "какую именно — подскажет мама Маши", kaspi: "https://www.instagram.com/krepak_nataly/" }
   ]
 };
