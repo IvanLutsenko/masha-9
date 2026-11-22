@@ -144,7 +144,7 @@
         <input id="rChild" name="child" autocomplete="off" required maxlength="60">
       </div>
       <div class="seg" role="radiogroup" aria-label="Придёт ли" data-i18n-aria="coming_aria">
-        <input type="radio" id="rYes" name="coming" value="yes" checked><label for="rYes" data-i18n="yes">Приду!</label>
+        <input type="radio" id="rYes" name="coming" value="yes" checked><label for="rYes" id="rYesLbl" data-i18n="yes">Приду!</label>
         <input type="radio" id="rNo" name="coming" value="no"><label for="rNo" data-i18n="no">Не получится</label>
       </div>
       <div class="field">
@@ -206,9 +206,12 @@ const store = {
 let state = { taken: [], coming: 0 };
 let mine = store.get("masha9.mine", {});   // giftId -> token
 
-/* имя гостя из ссылки: …/#Соня */
-const G = (() => { try { return Gender.parse(decodeURIComponent(location.hash.slice(1)).slice(0, 40)); } catch { return { name: "", g: null }; } })();
-const guest = G.name;
+/* гости из ссылки: …/#Соня или …/#Прохор+Вера (братья и сёстры — одно приглашение) */
+const GS = (() => { try { return decodeURIComponent(location.hash.slice(1)).slice(0, 80).split("+").map(x => Gender.parse(x)).filter(x => x.name); } catch { return []; } })();
+const G = GS[0] || { name: "", g: null };
+const many = GS.length > 1;
+const guest = GS.map(x => x.name).join(" и ");            // для таблицы — всегда по-русски
+const guestShown = voc => I18N.names(GS, voc);            // для экрана — на языке сайта
 
 function renderStatic(){
   $("dateVal").textContent = T("date_text");
@@ -223,12 +226,13 @@ function renderStatic(){
   }
   if (guest){
     $("envName").textContent = "Кому: " + guest;
-    $("greet").textContent = T(Gender.pick(G.g, "greet_m", "greet_f", "greet_n"), { name: guest, g: G.g, voc: true });
-    $("intro").textContent = T(Gender.pick(G.g, "intro_m", "intro_f", "intro"));
+    $("greet").textContent = many ? T("greet_pl", { name: guestShown(true) }) : T(Gender.pick(G.g, "greet_m", "greet_f", "greet_n"), { name: guest, g: G.g, voc: true });
+    $("intro").textContent = many ? T("intro_pl") : T(Gender.pick(G.g, "intro_m", "intro_f", "intro"));
     $("rChild").value = guest;
     $("gWho").value = guest;
-    $("rsvpTitle").textContent = T("rsvp_h_name", { name: guest, g: G.g, voc: true });
-    $("whoName").textContent = guest;
+    $("rsvpTitle").textContent = many ? T("rsvp_h_pl", { name: guestShown(true) }) : T("rsvp_h_name", { name: guest, g: G.g, voc: true });
+    $("whoName").textContent = many ? guestShown(false) : guest;
+    if (many){ $("rYesLbl").textContent = T("yes_pl"); }
     $("whoLine").hidden = false;
     $("childField").hidden = true;
   }
@@ -355,7 +359,7 @@ $("rsvpForm").addEventListener("submit", async e => {
   try {
     const r = await API.post({ action: "rsvp", child, coming, parent: "", contact: f.contact.value, note: f.note.value });
     if (!r.ok) throw new Error(r.error);
-    msg.textContent = coming ? T("sent_yes") : T("sent_no");
+    msg.textContent = coming ? T(many ? "sent_yes_pl" : "sent_yes") : T("sent_no");
     if (coming) burst();
     msg.className = "msg ok";
     if (!$("gWho").value) $("gWho").value = child;

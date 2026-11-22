@@ -63,7 +63,7 @@
 <script>
 const P = window.PARTY, $ = id => document.getElementById(id);
 // Ожидаемые гости — для счётчика «ещё не ответили». Хранится только в браузере родителя.
-const EXPECTED = 14;
+const EXPECTED = 12;   // приглашений (братья и сёстры — одно)
 let pin = "";
 try { pin = sessionStorage.getItem("masha9.pin") || ""; } catch {}
 
