@@ -283,3 +283,5 @@ footer .hand{font-size:28px}
   45%{opacity:1;transform:scale(2.2);background-color:#fffdf4}
   100%{opacity:0;transform:scale(3);filter:blur(6px)}}
 @media (prefers-reduced-motion:reduce){.flash.go{animation:none}.lang-stars{animation:none}}
+.letter::before,.letter::after{z-index:1}
+.wax{z-index:2}

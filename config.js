@@ -14,7 +14,6 @@ window.PARTY = {
   // kaspi: ссылка на товар (https://kaspi.kz/shop/p/...) или поисковый запрос — тогда «Искать на Kaspi»
   gifts: [
     { id: "tab-paws",     title: "Набор для создания сквишей «таба-лапка»", kaspi: "https://www.wildberries.kz/catalog/296162548/detail.aspx?size=450896874" },
-    { id: "markers",      title: "Волшебные фломастеры" },
     { id: "paint-num",    title: "Картина по номерам",              kaspi: "https://kaspi.kz/shop/p/kartina-po-nomeram-malen-kii-prints-na-kite-holst-na-podramnike-40x30-sm-167075618/" },
     { id: "canvas",       title: "Холст для рисования",             kaspi: "https://kaspi.kz/shop/p/holst-30h40-na-podramnike-h30-40-168741938/" },
     { id: "cat-lamp",     title: "Ночник в форме кошки",            kaspi: "https://kaspi.kz/shop/p/marco-nochnik-detskii-191465-koshechka-silikon-110070017/" },
