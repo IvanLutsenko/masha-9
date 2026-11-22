@@ -6,6 +6,10 @@
 <title>Маше 9 — Лагерь полукровок</title>
 <meta name="robots" content="noindex">
 <meta property="og:title" content="Маше 9 — приглашение в Лагерь полукровок">
+<meta property="og:image" content="https://ivanlutsenko.github.io/masha-9/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:description" content="Суббота, 5 декабря, 12:00. Квест в Лагере полукровок. Совиная почта для юных полубогов и волшебников.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +47,10 @@
 </div>
 <div class="flash" id="flash" aria-hidden="true"></div>
 
+<nav class="lang-switch" id="langSwitch" aria-label="Мова · Тіл · Язык" hidden>
+  <button type="button" data-lang="uk" lang="uk">УКР</button><button type="button" data-lang="kk" lang="kk">ҚАЗ</button><button type="button" data-lang="ru" lang="ru">РУС</button>
+</nav>
+
 <div class="wrap">
   <header class="arch">
     <svg viewBox="0 0 420 150" aria-hidden="true">
@@ -79,6 +87,7 @@
     <p class="sign">Маша</p>
     <div class="wax" aria-hidden="true">Ω</div>
   </article>
+  <a class="btn cta" href="#h-rsvp" data-i18n="cta">Ответить сове ↓</a>
 
   <section aria-labelledby="h-when" style="margin-top:10px">
     <h2 id="h-when"><span class="gr" data-i18n="when_gr">Миссия</span><span data-i18n="when_h">Когда и где</span></h2>
@@ -86,8 +95,9 @@
       <div class="fact">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
         <span class="lbl" data-i18n="date_lbl">Дата</span>
-        <span class="val" id="dateVal"></span>
-        <span class="note" id="timeVal">время тоже сообщим</span>
+        <span class="val" id="dateVal">Суббота, 5 декабря</span>
+        <span class="note" id="timeVal">с 12:00, примерно 4–5 часов</span>
+        <span class="note parents" data-i18n="parents">Родители — по желанию: можно остаться с нами или забрать ребёнка в конце.</span>
       </div>
     </div>
     <a class="omap" id="mapLink" target="_blank" rel="noopener">
@@ -103,7 +113,7 @@
         <g transform="translate(316 132)"><circle r="16" fill="none" stroke="#5a3c22" stroke-width="1.2"/><path d="M0 -14 L4 0 L0 14 L-4 0 Z" fill="#b3261e"/><text y="-19" font-size="9" text-anchor="middle" fill="#5a3c22" font-family="Lora, serif">С</text></g>
       </svg>
       <div class="omap-foot">
-        <div class="omap-addr"><b id="placeVal">Алматы</b><span id="placeNote">адрес пришлём</span></div>
+        <div class="omap-addr"><b id="placeVal">KazQuest</b><span id="placeNote">пр. Райымбека, 120/124</span></div>
         <span class="omap-btn" id="mapBtn" data-i18n="map_btn">Проложить путь</span>
       </div>
     </a>
@@ -142,7 +152,8 @@
         <label for="rChild" data-i18n="child_lbl">Имя полубога (ребёнка)</label>
         <input id="rChild" name="child" autocomplete="off" required maxlength="60">
       </div>
-      <div class="seg" role="radiogroup" aria-label="Придёт ли" data-i18n-aria="coming_aria">
+      <div class="kids" id="kidsBox" hidden></div>
+      <div class="seg" id="comingSeg" role="radiogroup" aria-label="Придёт ли" data-i18n-aria="coming_aria">
         <input type="radio" id="rYes" name="coming" value="yes" checked><label for="rYes" id="rYesLbl" data-i18n="yes">Приду!</label>
         <input type="radio" id="rNo" name="coming" value="no"><label for="rNo" data-i18n="no">Не получится</label>
       </div>
@@ -165,6 +176,7 @@
       <p class="lead" data-i18n="wish_lead">Маша составила список сама. Нажми «Подарю это», и подарок станет занятым для остальных гостей. Передумаешь — нажми «Отменить».</p>
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
+    <div class="werr" id="wErr" hidden><span data-i18n="load_err">Не удалось узнать, какие подарки уже выбраны.</span> <button type="button" class="btn ghost small" id="wRetry" data-i18n="retry">Повторить</button></div>
     <div class="msg" id="wMsg" role="status"></div>
     <ol class="wishes" id="wishes"></ol>
   </section>
@@ -238,7 +250,9 @@ function renderStatic(){
   }
   else { $("greet").textContent = T("greet"); $("intro").textContent = T("intro"); $("rsvpTitle").textContent = T("rsvp_h"); }
   $("demoNote").hidden = !API.isDemo();
-  $("whoEdit").onclick = () => { $("childField").hidden = false; $("whoLine").hidden = true; $("rChild").focus(); };
+  renderKids();
+  document.querySelectorAll(".lang-switch button").forEach(b => b.setAttribute("aria-current", b.dataset.lang === I18N.lang ? "true" : "false"));
+  $("whoEdit").onclick = () => { $("childField").hidden = false; $("whoLine").hidden = true; $("kidsBox").hidden = true; $("comingSeg").hidden = false; $("rChild").value = ""; $("rChild").focus(); };
   // отсчёт
   if (!P.date){ $("days").closest(".count").hidden = true; return; }
   const [y,m,d] = P.date.split("-").map(Number);
@@ -257,11 +271,21 @@ function kaspiHref(k){
   return /^https?:\/\//.test(k) ? k : "https://kaspi.kz/shop/search/?text=" + encodeURIComponent(k);
 }
 
+function shopName(u){ return /wildberries/.test(u) ? "Wildberries" : /instagram/.test(u) ? "Instagram" : "Kaspi"; }
+function giftLink(g){
+  const kh = kaspiHref(g.kaspi); if (!kh) return null;
+  const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener";
+  a.textContent = /^https?:/.test(g.kaspi) ? T("kaspi_see", { shop: shopName(g.kaspi) }) : T("kaspi_find");
+  return a;
+}
+
+let loaded = false, loadFailed = false;
 function renderWishes(){
   const ol = $("wishes"); ol.innerHTML = "";
+  $("wErr").hidden = !loadFailed;
   P.gifts.forEach((g, i) => {
     const taken = state.taken.includes(g.id);
-    const isMine = taken && mine[g.id];
+    const isMine = taken && !!mine[g.id];
     const li = document.createElement("li");
     li.className = "wish" + (taken ? " taken" : "") + (isMine ? " mine" : "");
     li.innerHTML = `<span class="num">${i+1}</span><div><div class="t"></div><div class="d"></div></div><div class="act"></div>`;
@@ -269,12 +293,8 @@ function renderWishes(){
     li.querySelector(".t").textContent = L.title;
     const d = li.querySelector(".d");
     if (L.note) d.append(L.note);
-    const kh = kaspiHref(g.kaspi);
-    if (kh && !taken){
-      if (L.note) d.append(" · ");
-      const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener"; a.textContent = /^https?:/.test(g.kaspi) ? T("kaspi_see", { shop: /wildberries/.test(g.kaspi) ? "Wildberries" : /instagram/.test(g.kaspi) ? "Instagram" : "Kaspi" }) : T("kaspi_find");
-      d.appendChild(a);
-    }
+    const a = (!taken || isMine) ? giftLink(g) : null;     // свою бронь можно купить по ссылке
+    if (a){ if (L.note) d.append(" · "); d.appendChild(a); }
     if (!d.childNodes.length) d.remove();
     const act = li.querySelector(".act");
     if (isMine){
@@ -284,7 +304,8 @@ function renderWishes(){
     } else if (taken){
       act.innerHTML = '<span class="badge"></span>'; act.firstChild.textContent = T("taken");
     } else {
-      const b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = T("give");
+      const b = document.createElement("button"); b.className = "btn"; b.type = "button";
+      b.textContent = loaded ? T("give") : T("loading"); b.disabled = !loaded;
       b.setAttribute("aria-label", T("give_aria") + L.title);
       b.onclick = () => guest ? quickReserve(g, b) : openGift(g); act.appendChild(b);
     }
@@ -297,16 +318,39 @@ function applyState(s){
   state = s;
   let changed = false;
   for (const id of Object.keys(mine)) if (!s.taken.includes(id)){ delete mine[id]; changed = true; }
+  // брони, сделанные по этой же личной ссылке с другого устройства
+  for (const id of (s.mine || [])) if (!mine[id]){ mine[id] = "name"; changed = true; }
   if (changed) store.set("masha9.mine", mine);
   renderWishes();
 }
 
 async function load(){
-  try { applyState(await API.get({ action: "state" })); }
-  catch { /* оставляем список без отметок */ }
+  try {
+    const r = await API.get(guest ? { action: "state", who: guest } : { action: "state" });
+    if (!r || !r.ok) throw new Error("bad");
+    loaded = true; loadFailed = false; applyState(r);
+  } catch { loadFailed = true; renderWishes(); }
+}
+$("wRetry").onclick = () => { $("wErr").hidden = true; load(); };
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") load(); });
+
+/* бронь: id брони создаёт телефон — повтор после обрыва связи не плодит дубли */
+const newRid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+function wishMsg(text, ok, g){
+  const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : "");
+  const a = g && giftLink(g); if (a){ m.append(" "); m.appendChild(a); }
+}
+async function reserve(g, who){
+  const rid = mine[g.id] && mine[g.id] !== "name" ? mine[g.id] : newRid();
+  mine[g.id] = rid; store.set("masha9.mine", mine);         // если ответ потеряется, бронь всё равно наша
+  try {
+    const r = await API.post({ action: "reserve", giftId: g.id, giftTitle: g.title, who, rid });
+    if (!r.ok){ delete mine[g.id]; store.set("masha9.mine", mine); }
+    if (r.state) applyState(r.state);
+    return r;
+  } catch (e) { load(); throw e; }
 }
 
-/* бронь */
 let current = null;
 function openGift(g){
   current = g;
@@ -323,57 +367,72 @@ $("giftForm").addEventListener("submit", async e => {
   if (!who){ $("gMsg").textContent = T("dlg_need"); $("gMsg").className = "msg err"; return; }
   $("gOk").disabled = true;
   try {
-    const r = await API.post({ action: "reserve", giftId: current.id, giftTitle: current.title, who });
-    if (r.ok){
-      mine[current.id] = r.token; store.set("masha9.mine", mine);
-      applyState(r.state); $("giftDlg").close();
-    } else if (r.error === "taken"){
-      applyState(r.state);
-      $("gMsg").textContent = T("dlg_taken"); $("gMsg").className = "msg err";
-    } else { throw new Error(r.error); }
+    const r = await reserve(current, who);
+    if (r.ok){ $("giftDlg").close(); wishMsg(T("wish_ok", { gift: I18N.gift(current).title }), true, current); }
+    else if (r.error === "taken"){ $("gMsg").textContent = T("dlg_taken"); $("gMsg").className = "msg err"; }
+    else throw new Error(r.error);
   } catch {
     $("gMsg").textContent = T("net_err"); $("gMsg").className = "msg err";
     $("gOk").disabled = false;
   }
 });
 
-function wishMsg(text, ok){ const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : ""); }
 async function quickReserve(g, btn){
   btn.disabled = true; btn.textContent = T("booking"); wishMsg("");
   try {
-    const r = await API.post({ action: "reserve", giftId: g.id, giftTitle: g.title, who: guest });
-    if (r.ok){ mine[g.id] = r.token; store.set("masha9.mine", mine); wishMsg(T("wish_ok", { gift: I18N.gift(g).title }), true); }
+    const r = await reserve(g, guest);
+    if (r.ok) wishMsg(T("wish_ok", { gift: I18N.gift(g).title }), true, g);
     else if (r.error === "taken") wishMsg(T("dlg_taken"));
     else throw new Error(r.error);
-    applyState(r.state);
   } catch { wishMsg(T("net_err")); btn.disabled = false; btn.textContent = T("give"); }
 }
 
 async function release(g, btn){
-  btn.disabled = true;
+  btn.disabled = true; wishMsg("");
   try {
-    const r = await API.post({ action: "release", giftId: g.id, token: mine[g.id] });
-    delete mine[g.id]; store.set("masha9.mine", mine);
-    if (r.ok) applyState(r.state); else load();
-  } catch { btn.disabled = false; }
+    const tok = mine[g.id];
+    const r = await API.post({ action: "release", giftId: g.id, token: tok === "name" ? "" : tok, who: guest });
+    if (r.ok){ delete mine[g.id]; store.set("masha9.mine", mine); applyState(r.state); }
+    else { wishMsg(T("cancel_fail")); btn.disabled = false; load(); }
+  } catch { wishMsg(T("net_err")); btn.disabled = false; }
 }
 
 /* RSVP */
+function renderKids(){
+  const box = $("kidsBox"); box.innerHTML = "";
+  if (!many) { box.hidden = true; $("comingSeg").hidden = false; return; }
+  box.hidden = false; $("comingSeg").hidden = true;
+  const lbl = document.createElement("p"); lbl.className = "kids-lbl"; lbl.textContent = T("kids_lbl"); box.appendChild(lbl);
+  GS.forEach((x, i) => {
+    const id = "kid" + i;
+    const w = document.createElement("label"); w.className = "kid"; w.htmlFor = id;
+    w.innerHTML = `<input type="checkbox" id="${id}" checked><span></span>`;
+    w.querySelector("span").textContent = x.name;
+    box.appendChild(w);
+  });
+}
 $("rsvpForm").addEventListener("submit", async e => {
   e.preventDefault();
   const f = e.target, msg = $("rMsg");
   const child = f.child.value.trim();
   if (!child){ msg.textContent = T("need_child"); msg.className = "msg err"; f.child.focus(); return; }
-  const coming = f.coming.value === "yes";
+  let kids, coming;
+  if (many && child === guest){
+    kids = GS.map((x, i) => ({ name: x.name, coming: $("kid" + i).checked }));
+    coming = kids.some(k => k.coming);
+  } else {
+    coming = f.coming.value === "yes";
+    kids = [{ name: child, coming }];
+  }
   $("rBtn").disabled = true;
   try {
-    const r = await API.post({ action: "rsvp", child, coming, parent: "", contact: f.contact.value, note: f.note.value });
+    const r = await API.post({ action: "rsvp", child, coming, kids, contact: f.contact.value, note: f.note.value });
     if (!r.ok) throw new Error(r.error);
-    msg.textContent = coming ? T(many ? "sent_yes_pl" : "sent_yes") : T("sent_no");
+    const n = kids.filter(k => k.coming).length;
+    msg.textContent = coming ? T(n > 1 ? "sent_yes_pl" : "sent_yes") : T("sent_no");
     if (coming) burst();
     msg.className = "msg ok";
     if (!$("gWho").value) $("gWho").value = child;
-    applyState(r.state);
   } catch {
     msg.textContent = T("net_err"); msg.className = "msg err";
   } finally { $("rBtn").disabled = false; }
@@ -396,8 +455,10 @@ function enterPortal(lang){
   I18N.set(lang); renderStatic(); renderWishes();
   const f = $("flash");
   f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
-  setTimeout(() => $("langScreen").hidden = true, calm ? 0 : 380);
+  setTimeout(() => { $("langScreen").hidden = true; $("langSwitch").hidden = false; }, calm ? 0 : 380);
 }
+function switchLang(lang){ store.set("masha9.lang", lang); I18N.set(lang); renderStatic(); renderWishes(); }
+document.querySelectorAll(".lang-switch button").forEach(b => b.addEventListener("click", () => switchLang(b.dataset.lang)));
 document.querySelectorAll(".lang-btn").forEach(b => b.addEventListener("click", () => enterPortal(b.dataset.lang)));
 $("env").addEventListener("click", openEnvelope);
 document.addEventListener("keydown", e => { if (e.key === "Escape") openEnvelope(); });
@@ -442,6 +503,13 @@ addEventListener("pointermove", e => {
   o.querySelectorAll(".pupil").forEach(p => p.setAttribute("transform", `translate(${dx} ${dy})`));
 });
 
+/* повторный визит: язык уже выбран — сразу на сайт, конверт и выбор языка пропускаем */
+const savedLang = store.get("masha9.lang", null);
+if (savedLang && ["ru", "uk", "kk"].includes(savedLang)){
+  I18N.set(savedLang);
+  $("envScreen").style.transition = "none"; $("envScreen").classList.add("gone"); $("env").classList.add("open");
+  $("langSwitch").hidden = false;
+}
 renderStatic(); renderWishes(); load();
 </script>
 </body>

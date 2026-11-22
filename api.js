@@ -15,26 +15,30 @@ window.API = (() => {
     return r.json();
   }
 
-  function pub() { return { ok: true, taken: demo.gifts.map(g => g.id), coming: demo.rsvp.filter(r => r.coming).length }; }
+  const norm = x => String(x || "").trim().toLowerCase().replace(/ё/g, "е");
+  function pub(who){ return { ok: true, taken: demo.gifts.map(g => g.id), mine: who ? demo.gifts.filter(g => norm(g.who) === norm(who)).map(g => g.id) : [] }; }
   function demoGet(p) {
     if (p.action === "admin") return { ok: true, rsvp: demo.rsvp, gifts: demo.gifts };
-    return pub();
+    return pub(p.who);
   }
   function demoPost(b) {
     if (b.action === "rsvp") {
-      demo.rsvp = demo.rsvp.filter(r => r.child.toLowerCase() !== b.child.toLowerCase());
-      demo.rsvp.push({ at: new Date().toISOString(), child: b.child, coming: b.coming !== false, parent: b.parent, contact: b.contact, note: b.note });
-      return { ok: true, state: pub() };
+      const kids = b.kids || [{ name: b.child, coming: b.coming !== false }];
+      const n = kids.filter(k => k.coming).length;
+      demo.rsvp = demo.rsvp.filter(r => norm(r.child) !== norm(b.child));
+      demo.rsvp.push({ at: new Date().toISOString(), child: b.child, coming: n > 0, kids: n, contact: b.contact, note: b.note, detail: kids.map(k => k.name + (k.coming ? " — да" : " — нет")).join(", ") });
+      return { ok: true };
     }
     if (b.action === "reserve") {
-      if (demo.gifts.some(g => g.id === b.giftId)) return { ok: false, error: "taken", state: pub() };
-      const token = Math.random().toString(36).slice(2);
-      demo.gifts.push({ at: new Date().toISOString(), id: b.giftId, title: b.giftTitle, who: b.who, token });
-      return { ok: true, token, state: pub() };
+      const ex = demo.gifts.find(g => g.id === b.giftId);
+      if (ex) return ex.token === b.rid ? { ok: true, token: b.rid, state: pub(b.who) } : { ok: false, error: "taken", state: pub(b.who) };
+      demo.gifts.push({ at: new Date().toISOString(), id: b.giftId, title: b.giftTitle, who: b.who, token: b.rid });
+      return { ok: true, token: b.rid, state: pub(b.who) };
     }
     if (b.action === "release") {
-      demo.gifts = demo.gifts.filter(g => !(g.id === b.giftId && (b.pin || g.token === b.token)));
-      return { ok: true, state: pub() };
+      const before = demo.gifts.length;
+      demo.gifts = demo.gifts.filter(g => !(g.id === b.giftId && (b.pin || (b.token && g.token === b.token) || (b.who && norm(g.who) === norm(b.who)))));
+      return demo.gifts.length < before ? { ok: true, state: pub(b.who) } : { ok: false, error: "not found" };
     }
   }
 
