@@ -13,7 +13,6 @@ const GIFT_HEAD = ['Когда', 'ID подарка', 'Подарок', 'Кто 
 const ALLOWED_IDS = ['tab-paws','paint-num','canvas','cat-lamp','soap','bedding-glow','bunny-charm','hp-pajama',
   'hp-science','hp-mug','hp-rug','hp-bag','mc-lego','karate-chest','karate-blue','doll'];
 const MAX_RESERVES_PER_10MIN = 20;   // от спама скриптом
-const MAX_PER_INVITE = 3;            // подарков на одно приглашение
 const MAX_PIN_FAILS = 5;             // потом блокировка на 15 минут
 
 // PIN админки — ADMIN_PIN в Secrets.gs (не в git). Там же INVITES — список приглашений для «кто не ответил».
@@ -67,7 +66,6 @@ function reserve_(b) {
     if (existing[4] === rid) return { ok: true, token: rid, state: publicState_(who) };   // повтор той же брони
     return { ok: false, error: 'taken', state: publicState_(who) };
   }
-  if (rows.filter(r => norm_(r[3]) === norm_(who)).length >= MAX_PER_INVITE) return { ok: false, error: 'limit', state: publicState_(who) };
   if (!rateOk_('reserve', MAX_RESERVES_PER_10MIN)) return { ok: false, error: 'busy' };
   sheet_(GIFTS, GIFT_HEAD).appendRow([new Date(), id, clean_(b.giftTitle, 80), who, rid]);
   return { ok: true, token: rid, state: publicState_(who) };

@@ -352,7 +352,6 @@ $("wRetry").onclick = () => { $("wErr").hidden = true; load(); };
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") load(); });
 
 /* бронь: id брони создаёт телефон — повтор после обрыва связи не плодит дубли */
-const MAX_MINE = 3;   // не больше трёх подарков на одно приглашение
 const newRid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
 function wishMsg(text, ok, g){
   const m = $("wMsg"); m.textContent = text || ""; m.className = "msg" + (text ? (ok ? " ok" : " err") : "");
@@ -374,7 +373,6 @@ async function reserve(g, who){
 let current = null;
 function openGift(g){
   current = g;
-  if (guest && Object.keys(mine).length >= MAX_MINE){ wishMsg(T("limit"), false, g); return; }
   $("giftDlgTitle").textContent = I18N.gift(g).title;
   $("gWhoField").hidden = !!guest;
   $("gConfirm").hidden = !guest;
