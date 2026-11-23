@@ -20,7 +20,7 @@ window.PARTY = {
     { id: "soap",         title: "Набор для мыловарения",           kaspi: "https://kaspi.kz/shop/p/nabor-dlja-mylovarenija-fantazer-mylo-svoimi-rukami-varezhka-s-pingvinom--185182063/" },
     { id: "bedding-glow", title: "Детское постельное бельё, светится в темноте", note: "160×80, «Юниор»", kaspi: "https://www.wildberries.kz/catalog/440602912/detail.aspx" },
     { id: "bunny-charm",  title: "Брелок с жидкостью и блёстками",         kaspi: "https://kaspi.kz/shop/p/brelok-zhidkost-ju-s-blestkami-na-kljuchi-i-rjukzak-4h12-sm-kost-1-sht-185230773/" },
-    { id: "hp-pajama",    title: "Пижама «Гарри Поттер»", note: "размер 146 см", kaspi: "https://www.wildberries.kz/catalog/1537221796/detail.aspx" },
+    { id: "hp-pajama",    title: "Пижама «Гарри Поттер»", note: "размер 146 см", kaspi: "https://www.wildberries.kz/catalog/1537221796/detail.aspx?size=2388746152" },
     { id: "hp-science",   title: "Набор опытов «Гарри Поттер» 8 в 1", kaspi: "https://www.wildberries.kz/catalog/1707240120/detail.aspx?size=2784334518" },
     { id: "hp-mug",       title: "Кружка «Гарри Поттер», 350 мл", kaspi: "https://kaspi.kz/shop/p/kruzhka-garri-potter-350-ml-keramika-151061603/" },
     { id: "hp-rug",       title: "Круглый коврик «Гриффиндор», 120×120 см", kaspi: "https://kaspi.kz/shop/p/harry-potter-dekorativnyi-kovrik-120x120-sm-griffindor-kruglaja-131571823/" },
