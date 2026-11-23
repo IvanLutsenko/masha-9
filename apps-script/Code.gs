@@ -6,16 +6,17 @@
  */
 const RSVP = 'RSVP';
 const GIFTS = 'Подарки';
-const RSVP_HEAD = ['Когда', 'Приглашение', 'Придёт', 'Детей придёт', 'Контакт', 'Комментарий', 'Кто именно'];
+const RSVP_HEAD = ['Когда', 'Приглашение', 'Придёт', 'Детей придёт', 'Контакт', 'Комментарий', 'Кто именно', 'Родитель останется'];
 const GIFT_HEAD = ['Когда', 'ID подарка', 'Подарок', 'Кто дарит', 'Токен'];
 
 // Должно совпадать с id в config.js — чужие id отклоняются.
 const ALLOWED_IDS = ['tab-paws','paint-num','canvas','cat-lamp','soap','bedding-glow','bunny-charm','hp-pajama',
   'hp-science','hp-mug','hp-rug','hp-bag','mc-lego','karate-chest','karate-blue','doll'];
 const MAX_RESERVES_PER_10MIN = 20;   // от спама скриптом
+const MAX_PER_INVITE = 3;            // подарков на одно приглашение
 const MAX_PIN_FAILS = 5;             // потом блокировка на 15 минут
 
-// PIN админки — константа ADMIN_PIN в Secrets.gs (не в git).
+// PIN админки — ADMIN_PIN в Secrets.gs (не в git). Там же INVITES — список приглашений для «кто не ответил».
 // Листы создаются сами при первом обращении.
 
 function doGet(e) {
@@ -50,7 +51,7 @@ function rsvp_(b) {
   const n = kids.filter(k => k.coming).length;
   const detail = kids.map(k => k.name + (k.coming ? ' — да' : ' — нет')).join(', ');
   sheet_(RSVP, RSVP_HEAD).appendRow([new Date(), child, n > 0 ? 'да' : 'нет', n,
-    clean_(b.contact, 60), clean_(b.note, 300), detail]);
+    clean_(b.contact, 60), clean_(b.note, 300), detail, n > 0 && b.adult ? 'да' : '']);
   return { ok: true };
 }
 
@@ -66,6 +67,7 @@ function reserve_(b) {
     if (existing[4] === rid) return { ok: true, token: rid, state: publicState_(who) };   // повтор той же брони
     return { ok: false, error: 'taken', state: publicState_(who) };
   }
+  if (rows.filter(r => norm_(r[3]) === norm_(who)).length >= MAX_PER_INVITE) return { ok: false, error: 'limit', state: publicState_(who) };
   if (!rateOk_('reserve', MAX_RESERVES_PER_10MIN)) return { ok: false, error: 'busy' };
   sheet_(GIFTS, GIFT_HEAD).appendRow([new Date(), id, clean_(b.giftTitle, 80), who, rid]);
   return { ok: true, token: rid, state: publicState_(who) };
@@ -99,7 +101,12 @@ function publicState_(whoRaw) {
 function adminState_() {
   const gifts = sheet_(GIFTS, GIFT_HEAD).getDataRange().getValues().slice(1)
     .map(r => ({ at: r[0], id: r[1], title: r[2], who: r[3] }));
-  return { ok: true, rsvp: latestRsvp_(), gifts: gifts };
+  const rsvp = latestRsvp_();
+  const invites = typeof INVITES !== 'undefined' ? INVITES : [];
+  const answered = rsvp.map(r => norm_(r.child));
+  return { ok: true, rsvp: rsvp, gifts: gifts, invites: invites.length,
+    pending: invites.filter(x => answered.indexOf(norm_(x)) === -1),
+    unknown: invites.length ? rsvp.filter(r => invites.map(norm_).indexOf(norm_(r.child)) === -1).map(r => r.child) : [] };
 }
 
 // последний ответ по каждому ребёнку
@@ -109,7 +116,7 @@ function latestRsvp_() {
   rows.forEach(r => {
     const kids = typeof r[3] === 'number' ? r[3] : (r[2] === 'да' ? 1 : 0);
     byChild[norm_(r[1])] =
-      { at: r[0], child: r[1], coming: r[2] === 'да', kids: kids, contact: r[4], note: r[5], detail: r[6] || '' };
+      { at: r[0], child: r[1], coming: r[2] === 'да', kids: kids, contact: r[4], note: r[5], detail: r[6] || '', adult: r[7] === 'да' || /\[родитель останется\]/.test(String(r[5])) };
   });
   return Object.keys(byChild).map(k => byChild[k]);
 }

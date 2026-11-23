@@ -26,7 +26,7 @@ window.API = (() => {
       const kids = b.kids || [{ name: b.child, coming: b.coming !== false }];
       const n = kids.filter(k => k.coming).length;
       demo.rsvp = demo.rsvp.filter(r => norm(r.child) !== norm(b.child));
-      demo.rsvp.push({ at: new Date().toISOString(), child: b.child, coming: n > 0, kids: n, contact: b.contact, note: b.note, detail: kids.map(k => k.name + (k.coming ? " — да" : " — нет")).join(", ") });
+      demo.rsvp.push({ at: new Date().toISOString(), child: b.child, coming: n > 0, kids: n, adult: n > 0 && !!b.adult, contact: b.contact, note: b.note, detail: kids.map(k => k.name + (k.coming ? " — да" : " — нет")).join(", ") });
       return { ok: true };
     }
     if (b.action === "reserve") {

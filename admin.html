@@ -30,6 +30,7 @@
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён.</div>
     <div class="tiles">
       <div class="tile ok"><b id="tKids">0</b><span>детей придут</span></div>
+      <div class="tile"><b id="tAdults">0</b><span>родителей останется</span></div>
       <div class="tile ok"><b id="tYes">0</b><span>приглашений: придут</span></div>
       <div class="tile no"><b id="tNo">0</b><span>приглашений: не придут</span></div>
       <div class="tile"><b id="tWait">0</b><span>приглашений без ответа</span></div>
@@ -38,6 +39,8 @@
 
     <section>
       <h2><span class="gr">Ответы</span>Регистрации</h2>
+      <p class="lead" id="pending" hidden></p>
+      <p class="lead" id="unknown" hidden></p>
       <div class="tablewrap"><table class="t-rsvp">
         <thead><tr><th>Ребёнок</th><th>Статус</th><th>Контакт</th><th>Комментарий</th></tr></thead>
         <tbody id="rsvpRows"></tbody>
@@ -80,14 +83,18 @@ async function load(){
 
   const yes = r.rsvp.filter(x => x.coming), no = r.rsvp.filter(x => !x.coming);
   $("tKids").textContent = yes.reduce((n, x) => n + (Number(x.kids) || (x.coming ? 1 : 0)), 0); $("tYes").textContent = yes.length; $("tNo").textContent = no.length;
-  $("tWait").textContent = Math.max(0, EXPECTED - r.rsvp.length);
+  const exp = r.invites || EXPECTED;
+  $("tWait").textContent = r.pending ? r.pending.length : Math.max(0, exp - r.rsvp.length);
+  $("tAdults").textContent = yes.filter(x => x.adult).length;
+  $("pending").hidden = !(r.pending && r.pending.length); $("pending").textContent = r.pending && r.pending.length ? "Без ответа: " + r.pending.join(", ") : "";
+  $("unknown").hidden = !(r.unknown && r.unknown.length); $("unknown").textContent = r.unknown && r.unknown.length ? "Ответили, но нет в списке приглашений: " + r.unknown.join(", ") : "";
   $("tGifts").textContent = r.gifts.length; $("tGiftsLbl").textContent = "из " + P.gifts.length + " подарков выбрано";
 
   const rb = $("rsvpRows"); rb.innerHTML = "";
   if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 4; rb.appendChild(tr); }
   [...yes, ...no].forEach(x => {
     const tr = document.createElement("tr");
-    tr.append(td(x.detail && /,/.test(x.detail) ? x.child + " (" + x.detail + ")" : x.child), x.coming ? pill(x.kids > 1 ? "придут: " + x.kids : "придёт","ok") : pill("не придёт","no"), telTd(x.contact), td(x.note, "muted"));
+    tr.append(td(x.detail && /,/.test(x.detail) ? x.child + " (" + x.detail + ")" : x.child), x.coming ? pill(x.kids > 1 ? "придут: " + x.kids : "придёт","ok") : pill("не придёт","no"), telTd(x.contact), td([x.adult ? "родитель останется" : "", x.note].filter(Boolean).join(" · "), "muted"));
     rb.appendChild(tr);
   });
 
