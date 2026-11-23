@@ -291,7 +291,7 @@ function kaspiHref(k){
   return /^https?:\/\//.test(k) ? k : "https://kaspi.kz/shop/search/?text=" + encodeURIComponent(k);
 }
 
-function shopName(u){ return /wildberries/.test(u) ? "Wildberries" : /instagram/.test(u) ? "Instagram" : "Kaspi"; }
+function shopName(u){ return /wildberries/.test(u) ? "Wildberries" : /ozon\./.test(u) ? "Ozon" : /instagram/.test(u) ? "Instagram" : /kaspi\./.test(u) ? "Kaspi" : (u.match(/^https?:\/\/(?:www\.)?([^/]+)/) || [,"сайте"])[1]; }
 function giftLink(g){
   const kh = kaspiHref(g.kaspi); if (!kh) return null;
   const a = document.createElement("a"); a.href = kh; a.target = "_blank"; a.rel = "noopener";
