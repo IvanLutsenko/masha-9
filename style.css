@@ -318,3 +318,4 @@ footer .hand{font-size:28px}
 dialog .confirm{margin:0;font-size:17px}
 .adult{font-size:16px}
 .lang-switch button{min-height:40px}
+.tile b small{font-size:.5em;font-weight:600;color:var(--muted)}

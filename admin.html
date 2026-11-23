@@ -30,6 +30,8 @@
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён.</div>
     <div class="tiles">
       <div class="tile ok"><b id="tKids">0</b><span>детей придут</span></div>
+      <div class="tile no"><b id="tKidsNo">0</b><span>детей не придут</span></div>
+      <div class="tile"><b id="tKidsWait">0</b><span>детей без ответа</span></div>
       <div class="tile"><b id="tAdults">0</b><span>родителей останется</span></div>
       <div class="tile ok"><b id="tYes">0</b><span>приглашений: придут</span></div>
       <div class="tile no"><b id="tNo">0</b><span>приглашений: не придут</span></div>
@@ -82,13 +84,23 @@ async function load(){
   $("demoNote").hidden = !API.isDemo();
 
   const yes = r.rsvp.filter(x => x.coming), no = r.rsvp.filter(x => !x.coming);
-  $("tKids").textContent = yes.reduce((n, x) => n + (Number(x.kids) || (x.coming ? 1 : 0)), 0); $("tYes").textContent = yes.length; $("tNo").textContent = no.length;
+  // дети в приглашении: «Прохор и Вера» → 2
+  const kidsIn = name => String(name || "").split(/\s+и\s+/).filter(Boolean).length || 1;
+  const pend = r.pending || [];
+  const kidsYes = yes.reduce((n, x) => n + (Number(x.kids) || 1), 0);
+  const kidsNo = r.rsvp.reduce((n, x) => n + kidsIn(x.child) - (x.coming ? (Number(x.kids) || 1) : 0), 0);
+  const kidsWait = pend.reduce((n, x) => n + kidsIn(x), 0);
+  const kidsTotal = kidsYes + kidsNo + kidsWait;
+  const invTotal = r.invites || EXPECTED;
+  const of = (id, n, total) => { const el = $(id); el.textContent = n; const sm = document.createElement("small"); sm.textContent = " / " + total; el.appendChild(sm); };
+  of("tKids", kidsYes, kidsTotal); of("tKidsNo", kidsNo, kidsTotal); of("tKidsWait", kidsWait, kidsTotal);
+  of("tYes", yes.length, invTotal); of("tNo", no.length, invTotal);
   const exp = r.invites || EXPECTED;
-  $("tWait").textContent = r.pending ? r.pending.length : Math.max(0, exp - r.rsvp.length);
+  of("tWait", r.pending ? r.pending.length : Math.max(0, exp - r.rsvp.length), invTotal);
   $("tAdults").textContent = yes.filter(x => x.adult).length;
   $("pending").hidden = !(r.pending && r.pending.length); $("pending").textContent = r.pending && r.pending.length ? "Без ответа: " + r.pending.join(", ") : "";
   $("unknown").hidden = !(r.unknown && r.unknown.length); $("unknown").textContent = r.unknown && r.unknown.length ? "Ответили, но нет в списке приглашений: " + r.unknown.join(", ") : "";
-  $("tGifts").textContent = r.gifts.length; $("tGiftsLbl").textContent = "из " + P.gifts.length + " подарков выбрано";
+  of("tGifts", r.gifts.length, P.gifts.length); $("tGiftsLbl").textContent = "подарков выбрано";
 
   const rb = $("rsvpRows"); rb.innerHTML = "";
   if (!r.rsvp.length){ const tr = document.createElement("tr"); tr.appendChild(td("Пока никто не ответил", "muted")).colSpan = 4; rb.appendChild(tr); }
