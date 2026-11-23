@@ -25,7 +25,6 @@ window.PARTY = {
     { id: "hp-mug",       title: "Кружка «Гарри Поттер», 350 мл", kaspi: "https://kaspi.kz/shop/p/kruzhka-garri-potter-350-ml-keramika-151061603/" },
     { id: "hp-rug",       title: "Круглый коврик «Гриффиндор», 120×120 см", kaspi: "https://kaspi.kz/shop/p/harry-potter-dekorativnyi-kovrik-120x120-sm-griffindor-kruglaja-131571823/" },
     { id: "hp-bag",       title: "Мини-сумка «Гарри Поттер»", note: "оранжево-коричневая", kaspi: "https://kaspi.kz/shop/p/mini-sumka-harry-potter-111-iskusstvennaja-kozha-oranzhevyi-korichnevyi-113610106/" },
-    { id: "karate-chest", title: "Нагрудник для карате Arawaza WKF, белый", note: "размер XS", kaspi: "https://kaspi.kz/shop/p/arawaza-wkf-approved-belyi-xs-187626948/" },
     { id: "karate-blue",  title: "Накладки для карате Arawaza, синие", note: "размер S", kaspi: "https://kaspi.kz/shop/p/arawaza-nakladki-dlja-karate-sinii-s-164728598/" },
     { id: "mc-lego",      title: "Конструктор Minecraft, 404 детали", kaspi: "https://kaspi.kz/shop/p/konstruktor-minecraft-minecraft-366b10-detalei-404-sht-181689367/" },
     { id: "doll",         title: "Кукла ручной работы", kaspi: "https://www.instagram.com/krepak_nataly/" }
