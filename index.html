@@ -143,7 +143,7 @@
 
   <svg class="sdiv" viewBox="0 0 350 40" aria-hidden="true"><path d="M10 24 L52 14 L96 26 L138 10 L175 20 L212 10 L254 26 L298 14 L340 24" fill="none" stroke="#e3b75a" stroke-width=".9" opacity=".6"/><g fill="#f2c46a"><circle cx="10" cy="24" r="1.6"/><circle cx="52" cy="14" r="2.2"/><circle cx="96" cy="26" r="1.8"/><circle cx="138" cy="10" r="2.4"/><circle cx="212" cy="10" r="2.4"/><circle cx="254" cy="26" r="1.8"/><circle cx="298" cy="14" r="2.2"/><circle cx="340" cy="24" r="1.6"/></g><path d="M175 8 L178 17 L187 20 L178 23 L175 32 L172 23 L163 20 L172 17 Z" fill="#f07a28"/></svg>
 
-  <section aria-labelledby="h-rsvp">
+  <section aria-labelledby="h-rsvp" id="rsvpSec">
     <h2 id="h-rsvp"><span class="gr" data-i18n="rsvp_gr">Ответ сове</span><span id="rsvpTitle">Ты придёшь?</span></h2>
     <form class="panel" id="rsvpForm" novalidate>
       <svg class="peek" viewBox="0 0 60 44" aria-hidden="true"><path d="M6 44 C6 18 16 8 30 8 S54 18 54 44Z" fill="#8c6a4e"/><path d="M12 10 L18 18 M48 10 L42 18" stroke="#8c6a4e" stroke-width="5" stroke-linecap="round"/><circle cx="22" cy="24" r="7" fill="#f3e6c8"/><circle cx="38" cy="24" r="7" fill="#f3e6c8"/><circle class="pupil" cx="23" cy="25" r="3.4" fill="#0d1530"/><circle class="pupil" cx="37" cy="25" r="3.4" fill="#0d1530"/><path d="M27 30 L30 35 L33 30Z" fill="#f07a28"/></svg>
@@ -178,6 +178,7 @@
     </div>
     <div class="demo" id="demoNote" hidden>Демо-режим: бэкенд не подключён, брони не сохраняются.</div>
     <div class="werr" id="wErr" hidden><span data-i18n="load_err">Не удалось узнать, какие подарки уже выбраны.</span> <button type="button" class="btn ghost small" id="wRetry" data-i18n="retry">Повторить</button></div>
+    <p class="lead" id="wNoLink" hidden data-i18n="need_link">Чтобы выбрать подарок, откройте свою личную ссылку из приглашения.</p>
     <div class="msg" id="wMsg" role="status"></div>
     <ol class="wishes" id="wishes"></ol>
   </section>
@@ -233,6 +234,7 @@ const G = GS[0] || { name: "", g: null };
 const many = GS.length > 1;
 const guest = GS.map(x => x.name).join(" и ");            // для таблицы — всегда по-русски
 const guestShown = voc => I18N.names(GS, voc);            // для экрана — на языке сайта
+const FAM = guest.toLowerCase().replace(/ё/g, "е") === "семья";   // семейная ссылка #Семья: без ответа сове, подарки можно отмечать
 
 function renderStatic(){
   $("dateVal").textContent = T("date_text");
@@ -245,7 +247,15 @@ function renderStatic(){
   else { $("mapBtn").hidden = true; }
   {
   }
-  if (guest){
+  $("rsvpSec").hidden = FAM;
+  $("wNoLink").hidden = !!guest;
+  if (FAM){
+    $("envName").textContent = "Кому: семье";
+    $("greet").textContent = T("greet_fam");
+    $("intro").textContent = T("intro_fam");
+    $("ctaBtn").textContent = T("cta_fam");
+  }
+  else if (guest){
     $("envName").textContent = "Кому: " + guest;
     $("greet").textContent = many ? T("greet_pl", { name: guestShown(true) }) : T(Gender.pick(G.g, "greet_m", "greet_f", "greet_n"), { name: guest, g: G.g, voc: true });
     $("intro").textContent = many ? T("intro_pl") : T(Gender.pick(G.g, "intro_m", "intro_f", "intro"));
@@ -315,7 +325,7 @@ function renderWishes(){
       b.onclick = () => release(g, b); act.appendChild(b);
     } else if (taken){
       act.innerHTML = '<span class="badge"></span>'; act.firstChild.textContent = T("taken");
-    } else {
+    } else if (guest){
       const b = document.createElement("button"); b.className = "btn"; b.type = "button";
       b.textContent = loaded ? T("give") : T("loading"); b.disabled = !loaded;
       b.setAttribute("aria-label", T("give_aria") + L.title);
@@ -439,7 +449,7 @@ function renderKids(){
   });
 }
 document.querySelectorAll('#comingSeg input').forEach(r => r.addEventListener("change", renderKids));
-$("ctaBtn").addEventListener("click", e => { e.preventDefault(); $("h-rsvp").scrollIntoView({ behavior: calm ? "auto" : "smooth" }); });
+$("ctaBtn").addEventListener("click", e => { e.preventDefault(); $(FAM ? "h-wish" : "h-rsvp").scrollIntoView({ behavior: calm ? "auto" : "smooth" }); });
 const rsvpKey = "masha9.rsvp." + (guest || "-");
 function showSaved(){
   const r = store.get(rsvpKey, null); if (!r) return;
