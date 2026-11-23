@@ -249,6 +249,7 @@ function renderStatic(){
   }
   $("rsvpSec").hidden = FAM;
   $("wNoLink").hidden = !!guest;
+  $("gWho").value = guest; $("gWho").required = !guest;   // скрытое required-поле молча блокирует отправку
   if (FAM){
     $("envName").textContent = "Кому: семье";
     $("greet").textContent = T("greet_fam");
@@ -386,7 +387,7 @@ function openGift(g){
   $("giftDlgTitle").textContent = I18N.gift(g).title;
   $("gWhoField").hidden = !!guest;
   $("gConfirm").hidden = !guest;
-  $("gConfirm").textContent = guest ? T("confirm_from", { name: many ? I18N.names(GS, false) : guest }) : "";
+  $("gConfirm").textContent = guest ? T("confirm_from", { name: FAM ? T("fam_name") : many ? I18N.names(GS, false) : guest }) : "";
   $("gMsg").textContent = ""; $("gMsg").className = "msg";
   $("gOk").disabled = false;
   $("giftDlg").showModal();
