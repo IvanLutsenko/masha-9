@@ -319,3 +319,5 @@ dialog .confirm{margin:0;font-size:17px}
 .adult{font-size:16px}
 .lang-switch button{min-height:40px}
 .tile b small{font-size:.5em;font-weight:600;color:var(--muted)}
+
+footer .reset{margin:10px auto 0;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:10px 12px;min-height:44px;cursor:pointer}

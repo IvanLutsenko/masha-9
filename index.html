@@ -187,6 +187,7 @@
     <svg class="constel" viewBox="0 0 120 60" aria-hidden="true"><path d="M30 14 L48 10 L56 26 L40 32 L30 14 M56 26 L62 50 L82 44 L96 20" fill="none" stroke="#e3b75a" stroke-width=".8" opacity=".6"/><g fill="#f2c46a"><circle cx="30" cy="14" r="2"/><circle cx="48" cy="10" r="2.4"/><circle cx="56" cy="26" r="2"/><circle cx="40" cy="32" r="1.8"/><circle cx="62" cy="50" r="2"/><circle cx="82" cy="44" r="2.2"/><circle cx="96" cy="20" r="2.6"/></g></svg>
     <span class="hand" data-i18n="footer">До встречи в лагере!</span>
     <span>Алматы, 2026</span>
+    <button type="button" class="reset" id="resetBtn" data-i18n="reset">Запечатать письмо обратно</button>
   </footer>
 </div>
 
@@ -222,11 +223,13 @@ let state = { taken: [], coming: 0 };
 let mine = store.get("masha9.mine", {});   // giftId -> token
 
 /* гости из ссылки: …/#Соня или …/#Прохор+Вера (братья и сёстры — одно приглашение) */
+let RAW = "";
 const GS = (() => {
   try {
     let raw = decodeURIComponent(location.hash.slice(1)).slice(0, 80);
     if (raw && document.getElementById(raw)) raw = store.get("masha9.hash", "");   // это якорь страницы, а не имя
     else if (raw) store.set("masha9.hash", raw);
+    RAW = raw;
     return raw.split("+").map(x => Gender.parse(x)).filter(x => x.name);
   } catch { return []; }
 })();
@@ -450,6 +453,12 @@ function renderKids(){
   });
 }
 document.querySelectorAll('#comingSeg input').forEach(r => r.addEventListener("change", renderKids));
+/* «Запечатать письмо обратно»: забыть язык и ответ на этом устройстве, имя из ссылки сохранить */
+$("resetBtn").addEventListener("click", () => {
+  try { Object.keys(localStorage).filter(k => k.startsWith("masha9.") && k !== "masha9.mine").forEach(k => localStorage.removeItem(k)); } catch {}
+  location.replace(location.pathname + (RAW ? "#" + encodeURIComponent(RAW) : ""));
+  location.reload();
+});
 $("ctaBtn").addEventListener("click", e => { e.preventDefault(); $(FAM ? "h-wish" : "h-rsvp").scrollIntoView({ behavior: calm ? "auto" : "smooth" }); });
 const rsvpKey = "masha9.rsvp." + (guest || "-");
 function showSaved(){
